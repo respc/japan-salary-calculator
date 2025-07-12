@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本年収計算機</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 日本年収計算機</h1>
+            <p>あなたの年収から手取り金額を正確に計算します</p>
+        </header>
+
+        <div class="calculator">
+            <form id="salaryForm">
+                <div class="section">
+                    <h3>基本情報</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="grossSalary">年収（総支給額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="grossSalary" placeholder="400" required>
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="age">年齢</label>
+                             <div style="display: flex; align-items: center;">
+                                <input type="number" id="age" placeholder="例: 30" required min="18" max="100">
+                                <span class="unit">歳</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="companyHousing">借り上げ社宅（月額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="companyHousing" placeholder="2">
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="lastYearSalary">前年年収（住民税計算用）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="lastYearSalary" placeholder="380">
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="prefecture">都道府県</label>
+                            <select id="prefecture">
+                                <option value="tokyo">東京都</option>
+                                <option value="osaka">大阪府</option>
+                                <option value="kanagawa">神奈川県</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="bonus">年間賞与額</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="bonus" placeholder="80">
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>控除情報</h3>
+                    <div class="checkbox-row">
+                        </div>
+
+                    <div class="expandable" id="advancedOptions">
+                        <button type="button" class="expand-btn" onclick="toggleAdvanced()">
+                            詳細設定 <span id="expandIcon">▼</span>
+                        </button>
+                        <div class="advanced-content" id="advancedContent">
+                            <div class="dependent-group">
+                                <div class="dependent-main">
+                                    <div class="input-group">
+                                        <label for="dependents">扶養親族数（配偶者除く）</label>
+                                        <div style="display: flex; align-items: center;">
+                                            <input type="number" id="dependents" placeholder="0" min="0" max="10">
+                                            <span class="unit">人</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dependent-sub">
+                                    <div class="input-group">
+                                        <label for="disabledDependents">うち障害者扶養人数</label>
+                                        <div style="display: flex; align-items: center;">
+                                            <input type="number" id="disabledDependents" placeholder="0" min="0" max="10">
+                                            <span class="unit">人</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="medicalExpenses">医療費控除</label>
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="text" id="medicalExpenses" placeholder="0">
+                                        <span class="unit">万円</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label for="lifeInsurance">生命保険料控除</label>
+                                    <div style="display: flex; align-items: center;">
+                                        <input type="text" id="lifeInsurance" placeholder="0">
+                                        <span class="unit">万円</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="donation">寄附金控除（ふるさと納税など）</label>
+                                     <div style="display: flex; align-items: center;">
+                                        <input type="text" id="donation" placeholder="0">
+                                        <span class="unit">万円</span>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label for="hasSpouse">配偶者控除あり</label>
+                                    <select id="hasSpouse">
+                                        <option value="no">いいえ</option>
+                                        <option value="yes">はい</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="calculate-btn">計算する</button>
+            </form>
+        </div>
+
+        <div id="results" class="results hidden">
+            <div class="results-header">
+                <h2>計算結果</h2>
+            </div>
+
+            <div class="result-grid">
+                <div class="result-card primary">
+                    <div class="result-label">手取り年収</div>
+                    <div class="result-value" id="netSalary">¥0</div>
+                    <div class="result-sub">月額: <span id="monthlyNet">¥0</span></div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-label">年収（総支給額）</div>
+                    <div class="result-value" id="grossAmount">¥0</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-label">控除合計</div>
+                    <div class="result-value" id="totalDeductions">¥0</div>
+                </div>
+            </div>
+
+            <div class="breakdown">
+                <h3>内訳詳細</h3>
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">所得税</span>
+                        <span class="breakdown-value" id="incomeTax">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">住民税</span>
+                        <span class="breakdown-value" id="residentTax">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">健康保険料</span>
+                        <span class="breakdown-value" id="healthInsurance">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">厚生年金保険料</span>
+                        <span class="breakdown-value" id="pensionInsurance">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">雇用保険料</span>
+                        <span class="breakdown-value" id="employmentInsurance">¥0</span>
+                    </div>
+                    <div class="breakdown-item" id="careInsuranceRow">
+                        <span class="breakdown-label">介護保険料</span>
+                        <span class="breakdown-value" id="careInsurance">¥0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bonus-breakdown" id="bonusBreakdown">
+                <h3>給与・賞与配分</h3>
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">月額基本給（想定）</span>
+                        <span class="breakdown-value" id="monthlyBase">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">年間賞与（手取り）</span>
+                        <span class="breakdown-value" id="bonusNet">¥0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tax-info">
+                <h3>来年の住民税・節税情報</h3>
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">来年の住民税（概算）</span>
+                        <span class="breakdown-value" id="nextYearResidentTax">¥0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">ふるさと納税控除上限額</span>
+                        <span class="breakdown-value" id="furusatoLimit">¥0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tax-tips">
+                <h3>💡 節税のアドバイス</h3>
+                <div id="taxTips">
+                    <div class="tip-item">
+                        <strong>ふるさと納税：</strong>
+                        <span id="furusatoTip">上限額まで寄附することで実質2,000円で返礼品を受け取れます。</span>
+                        <div class="tax-savings" id="furusatoSavings">
+                            <span class="savings-label">💰 実質節税額：</span>
+                            <span class="savings-amount" id="furusatoSavingsAmount">¥0</span>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <strong>iDeCo（個人型確定拠出年金）：</strong>
+                        <span>毎月23,000円まで拠出可能。全額所得控除で大幅節税効果があります。</span>
+                        <div class="tax-savings" id="idecoSavings">
+                            <span class="savings-label">💰 年間節税額（最大拠出時）：</span>
+                            <span class="savings-amount" id="idecoSavingsAmount">¥0</span>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <strong>つみたてNISA：</strong>
+                        <span>年間40万円まで投資利益が非課税。長期投資におすすめです。</span>
+                        <div class="tax-savings" id="nisaSavings">
+                            <span class="savings-label">💰 想定節税額（年利5%の場合）：</span>
+                            <span class="savings-amount" id="nisaSavingsAmount">¥0</span>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <strong>生命保険料控除：</strong>
+                        <span>年間12万円まで控除可能。未加入の場合は検討してみてください。</span>
+                        <div class="tax-savings" id="insuranceSavings">
+                            <span class="savings-label">💰 年間節税額（最大控除時）：</span>
+                            <span class="savings-amount" id="insuranceSavingsAmount">¥0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>💡 注意事項</h3>
+            <ul>
+                <li>この計算は概算値です。実際の税額は各種控除により変動します。</li>
+                <li>社会保険料率は2024年度の標準的な料率を使用しています。</li>
+                <li>住民税は翌年課税のため、転職初年度は前年所得ベースで計算されます。</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            const icon = document.getElementById('expandIcon');
+            content.classList.toggle('show');
+            if (content.classList.contains('show')) {
+                icon.textContent = '▲';
+            } else {
+                icon.textContent = '▼';
+            }
+        }
+    </script>
+</body>
+</html>
