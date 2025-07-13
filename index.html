@@ -3,8 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日本年収計算機</title>
+    <meta name="description" content="日本の年収から手取り金額を正確に計算する無料ツール。所得税、住民税、社会保険料を地域別に詳細計算。AI節税アドバイス付き。">
+    <meta name="keywords" content="年収計算, 手取り計算, 日本, 税金計算, 所得税, 住民税, 社会保険料, 節税, AI">
+    <meta name="author" content="Japan Salary Calculator">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com/">
+    <meta property="og:title" content="日本年収計算機 - AI節税アドバイス付き">
+    <meta property="og:description" content="日本の年収から手取り金額を正確に計算。地域別税率対応、AI個人化節税戦略付き。">
+    <meta property="og:image" content="https://your-domain.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://your-domain.com/">
+    <meta property="twitter:title" content="日本年収計算機 - AI節税アドバイス付き">
+    <meta property="twitter:description" content="日本の年収から手取り金額を正確に計算。地域別税率対応、AI個人化節税戦略付き。">
+    <meta property="twitter:image" content="https://your-domain.com/og-image.jpg">
+
+    <title>日本年収計算機 - 手取り計算・AI節税アドバイス付き</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="style.css" as="style">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "日本年収計算機",
+        "description": "日本の年収から手取り金額を正確に計算する無料ツール",
+        "url": "https://your-domain.com/",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -25,6 +68,19 @@
                                 <span class="unit">万円</span>
                             </div>
                         </div>
+                        <div class="input-group">
+                            <label for="employmentType">雇用形態</label>
+                            <select id="employmentType">
+                                <option value="seishain">正社員</option>
+                                <option value="keiyaku">契約社員</option>
+                                <option value="part">アルバイト・パート</option>
+                                <option value="jieigyou">自営業者</option>
+                                <option value="freelance">フリーランス</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
                         <div class="input-group">
                             <label for="age">年齢</label>
                              <div style="display: flex; align-items: center;">
@@ -56,8 +112,14 @@
                             <label for="prefecture">都道府県</label>
                             <select id="prefecture">
                                 <option value="tokyo">東京都</option>
-                                <option value="osaka">大阪府</option>
                                 <option value="kanagawa">神奈川県</option>
+                                <option value="osaka">大阪府</option>
+                                <option value="aichi">愛知県</option>
+                                <option value="hyogo">兵庫県</option>
+                                <option value="kyoto">京都府</option>
+                                <option value="fukuoka">福岡県</option>
+                                <option value="hokkaido">北海道</option>
+                                <option value="miyagi">宮城県</option>
                                 <option value="other">その他</option>
                             </select>
                         </div>
@@ -65,6 +127,23 @@
                             <label for="bonus">年間賞与額</label>
                             <div style="display: flex; align-items: center;">
                                 <input type="text" id="bonus" placeholder="80">
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="sideIncome">副業・雑所得（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="sideIncome" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="sideExpenses">副業経費（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="sideExpenses" placeholder="0">
                                 <span class="unit">万円</span>
                             </div>
                         </div>
@@ -176,7 +255,7 @@
                         <span class="breakdown-value" id="residentTax">¥0</span>
                     </div>
                     <div class="breakdown-item">
-                        <span class="breakdown-label">健康保険料</span>
+                        <span class="breakdown-label">健康保険料（40歳以上は介護保険込み）</span>
                         <span class="breakdown-value" id="healthInsurance">¥0</span>
                     </div>
                     <div class="breakdown-item">
@@ -187,9 +266,9 @@
                         <span class="breakdown-label">雇用保険料</span>
                         <span class="breakdown-value" id="employmentInsurance">¥0</span>
                     </div>
-                    <div class="breakdown-item" id="careInsuranceRow">
-                        <span class="breakdown-label">介護保険料</span>
-                        <span class="breakdown-value" id="careInsurance">¥0</span>
+                    <div class="breakdown-item" id="sideIncomeBreakdown" style="display: none;">
+                        <span class="breakdown-label">副業所得</span>
+                        <span class="breakdown-value" id="sideIncomeAmount">¥0</span>
                     </div>
                 </div>
             </div>
@@ -215,9 +294,77 @@
                         <span class="breakdown-label">来年の住民税（概算）</span>
                         <span class="breakdown-value" id="nextYearResidentTax">¥0</span>
                     </div>
-                    <div class="breakdown-item">
-                        <span class="breakdown-label">ふるさと納税控除上限額</span>
-                        <span class="breakdown-value" id="furusatoLimit">¥0</span>
+                </div>
+            </div>
+
+            <!-- Calculation Process Transparency Section -->
+            <div class="calculation-process" id="calculationProcess" style="display: none;">
+                <div class="process-header">
+                    <h3>📊 計算過程の詳細</h3>
+                    <button class="process-toggle-btn" id="processToggleBtn" onclick="toggleCalculationProcess()">
+                        計算過程を表示 <span id="processIcon">▼</span>
+                    </button>
+                </div>
+                <div class="process-content" id="processContent">
+                    <div class="process-tabs">
+                        <button class="process-tab active" onclick="showProcessTab('income')">所得税計算</button>
+                        <button class="process-tab" onclick="showProcessTab('resident')">住民税計算</button>
+                        <button class="process-tab" onclick="showProcessTab('social')">社会保険料計算</button>
+                        <button class="process-tab" onclick="showProcessTab('deductions')">控除詳細</button>
+                    </div>
+                    
+                    <div class="process-tab-content" id="incomeTab">
+                        <!-- Income tax calculation details -->
+                    </div>
+                    
+                    <div class="process-tab-content" id="residentTab" style="display: none;">
+                        <!-- Resident tax calculation details -->
+                    </div>
+                    
+                    <div class="process-tab-content" id="socialTab" style="display: none;">
+                        <!-- Social insurance calculation details -->
+                    </div>
+                    
+                    <div class="process-tab-content" id="deductionsTab" style="display: none;">
+                        <!-- Deductions breakdown -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-recommendations" id="aiRecommendations" style="display: none;">
+                <h3>🤖 AI個人化節税戦略</h3>
+                <div class="user-profile">
+                    <div class="profile-tag" id="profileSummary">あなたのプロフィール分析中...</div>
+                </div>
+                <div class="recommendation-grid" id="recommendationGrid">
+                    <!-- AI recommendations will be populated here -->
+                </div>
+                <div class="strategy-summary" id="strategySummary">
+                    <h4>💡 推奨戦略</h4>
+                    <div class="strategy-text" id="strategyText">分析中...</div>
+                </div>
+                
+                <!-- Plan Comparison Section -->
+                <div class="plan-comparison" id="planComparison" style="display: none;">
+                    <div class="comparison-header">
+                        <h4>📊 節税プラン比較</h4>
+                        <button class="comparison-btn" id="showComparisonBtn" onclick="toggleComparison()">
+                            プラン比較を表示 <span id="comparisonIcon">▼</span>
+                        </button>
+                    </div>
+                    <div class="comparison-content" id="comparisonContent">
+                        <div class="plan-selector">
+                            <h5>比較するプランを選択してください：</h5>
+                            <div class="plan-options" id="planOptions">
+                                <!-- Plan options will be populated here -->
+                            </div>
+                        </div>
+                        <div class="comparison-table" id="comparisonTable">
+                            <!-- Comparison table will be populated here -->
+                        </div>
+                        <div class="comparison-summary" id="comparisonSummary">
+                            <!-- Summary will be populated here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -225,9 +372,17 @@
             <div class="tax-tips">
                 <h3>💡 節税のアドバイス</h3>
                 <div id="taxTips">
+                    <div class="tip-item" id="sideIncomeAdvice" style="display: none;">
+                        <strong>副業所得について：</strong>
+                        <span id="sideIncomeAdviceText">副業所得に関するアドバイスが表示されます。</span>
+                        <div class="tax-savings" id="sideIncomeWarning">
+                            <span class="savings-label">⚠️ 注意事項：</span>
+                            <span class="savings-amount" id="sideIncomeWarningText">確定申告が必要です</span>
+                        </div>
+                    </div>
                     <div class="tip-item">
                         <strong>ふるさと納税：</strong>
-                        <span id="furusatoTip">上限額まで寄附することで実質2,000円で返礼品を受け取れます。</span>
+                        <span id="furusatoTip">控除上限額まで寄附することで実質2,000円で返礼品を受け取れます。事前にシミュレーションサイト等で上限額をご確認ください。</span>
                         <div class="tax-savings" id="furusatoSavings">
                             <span class="savings-label">💰 実質節税額：</span>
                             <span class="savings-amount" id="furusatoSavingsAmount">¥0</span>
@@ -282,6 +437,49 @@
             } else {
                 icon.textContent = '▼';
             }
+        }
+
+        function toggleComparison() {
+            const content = document.getElementById('comparisonContent');
+            const icon = document.getElementById('comparisonIcon');
+            const btn = document.getElementById('showComparisonBtn');
+            
+            content.classList.toggle('show');
+            if (content.classList.contains('show')) {
+                icon.textContent = '▲';
+                btn.innerHTML = 'プラン比較を隠す <span id="comparisonIcon">▲</span>';
+            } else {
+                icon.textContent = '▼';
+                btn.innerHTML = 'プラン比較を表示 <span id="comparisonIcon">▼</span>';
+            }
+        }
+
+        function toggleCalculationProcess() {
+            const content = document.getElementById('processContent');
+            const icon = document.getElementById('processIcon');
+            const btn = document.getElementById('processToggleBtn');
+            
+            content.classList.toggle('show');
+            if (content.classList.contains('show')) {
+                icon.textContent = '▲';
+                btn.innerHTML = '計算過程を隠す <span id="processIcon">▲</span>';
+            } else {
+                icon.textContent = '▼';
+                btn.innerHTML = '計算過程を表示 <span id="processIcon">▼</span>';
+            }
+        }
+
+        function showProcessTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.process-tab');
+            const contents = document.querySelectorAll('.process-tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.style.display = 'none');
+            
+            // Show selected tab
+            document.querySelector(`[onclick="showProcessTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
         }
     </script>
 </body>

@@ -547,3 +547,715 @@ header p {
     padding: 2px 8px;
     border-radius: 4px;
 }
+
+/* AI Recommendations Styles */
+.ai-recommendations {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-recommendations::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)" /></svg>');
+    pointer-events: none;
+}
+
+.ai-recommendations h3 {
+    color: white;
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.user-profile {
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.recommendation-item {
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.recommendation-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.25);
+}
+
+.recommendation-item.high-priority {
+    border-left: 4px solid #f1c40f;
+    background: rgba(241, 196, 15, 0.2);
+}
+
+.recommendation-item.medium-priority {
+    border-left: 4px solid #3498db;
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.recommendation-item.low-priority {
+    border-left: 4px solid #95a5a6;
+    background: rgba(149, 165, 166, 0.2);
+}
+
+.recommendation-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recommendation-desc {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+.recommendation-impact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.impact-amount {
+    font-weight: 700;
+    background: rgba(255,255,255,0.3);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.strategy-summary {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.strategy-summary h4 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.strategy-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.95;
+}
+
+/* Plan Comparison Styles */
+.plan-comparison {
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.comparison-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.comparison-header h4 {
+    color: white;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.comparison-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comparison-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+}
+
+.comparison-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.comparison-content.show {
+    max-height: 1000px;
+    padding-top: 16px;
+}
+
+.plan-selector {
+    margin-bottom: 20px;
+}
+
+.plan-selector h5 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.plan-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.plan-option {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.plan-option:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+}
+
+.plan-option.selected {
+    background: rgba(255,255,255,0.3);
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.3);
+}
+
+.plan-option-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.plan-option-impact {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.comparison-table {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.comparison-table th {
+    font-weight: 600;
+    background: rgba(255,255,255,0.1);
+    font-size: 0.9rem;
+}
+
+.comparison-table td {
+    font-size: 0.85rem;
+}
+
+.comparison-table .plan-column {
+    min-width: 120px;
+}
+
+.comparison-table .impact-cell {
+    font-weight: 600;
+    color: #f1c40f;
+}
+
+.comparison-summary {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.comparison-summary h5 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.summary-stat {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+.summary-stat-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 4px;
+}
+
+.summary-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1c40f;
+}
+
+.best-combination {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(241, 196, 15, 0.2);
+    border: 1px solid rgba(241, 196, 15, 0.4);
+    border-radius: 8px;
+}
+
+.best-combination-text {
+    color: white;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Calculation Process Transparency Styles */
+.calculation-process {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+    border: 2px solid #f0f0f0;
+}
+
+.process-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.process-header h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.process-toggle-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.process-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.process-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.process-content.show {
+    max-height: 2000px;
+    padding-top: 16px;
+}
+
+.process-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.process-tab {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.process-tab:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.process-tab.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.process-tab-content {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+}
+
+.calculation-step {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.calculation-step:last-child {
+    margin-bottom: 0;
+}
+
+.step-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-number {
+    background: #667eea;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.step-formula {
+    background: #f0f4f8;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #2d3748;
+    line-height: 1.4;
+}
+
+.step-explanation {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.step-result {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+    border: 1px solid #27ae60;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.step-result-label {
+    font-size: 0.9rem;
+    color: #27ae60;
+    font-weight: 500;
+}
+
+.step-result-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+.formula-variable {
+    background: #667eea;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin: 0 2px;
+}
+
+.rate-source {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #856404;
+}
+
+.rate-source-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.interactive-slider {
+    margin: 12px 0;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.slider-label {
+    font-size: 0.9rem;
+    color: #666;
+    min-width: 100px;
+}
+
+.slider-input {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e9ecef;
+    outline: none;
+    appearance: none;
+}
+
+.slider-input::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+}
+
+.slider-value {
+    font-weight: 600;
+    color: #333;
+    min-width: 80px;
+    text-align: right;
+}
+
+.deduction-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.deduction-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.deduction-item-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.deduction-item-amount {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+@media (max-width: 768px) {
+    .process-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .process-toggle-btn {
+        justify-content: center;
+    }
+    
+    .process-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .process-tab {
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .calculation-step {
+        padding: 12px;
+    }
+    
+    .step-formula {
+        font-size: 0.8rem;
+    }
+    
+    .deduction-breakdown {
+        grid-template-columns: 1fr;
+    }
+    
+    .slider-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+}
+
+/* Loading Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Performance Optimizations */
+.calculation-step,
+.recommendation-item,
+.plan-option {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Error Message Styles */
+.error-message {
+    font-family: 'Hiragino Sans', 'Yu Gothic', 'Helvetica Neue', Arial, sans-serif;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus Styles for Better Accessibility */
+button:focus,
+input:focus,
+select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .calculator {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .calculate-btn,
+    .process-toggle-btn,
+    .comparison-btn {
+        display: none;
+    }
+    
+    .process-content,
+    .comparison-content {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
