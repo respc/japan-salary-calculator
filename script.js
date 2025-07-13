@@ -543,196 +543,284 @@ class JapanSalaryCalculator {
     }
 
     displayResults(data) {
-        const totalDeductionsDisplay = data.socialInsurance.total + data.incomeTax + data.residentTax + data.companyHousingDeduction;
+        try {
+            const totalDeductionsDisplay = data.socialInsurance.total + data.incomeTax + data.residentTax + data.companyHousingDeduction;
 
-        document.getElementById('netSalary').textContent = this.formatCurrency(data.netSalary);
-        document.getElementById('monthlyNet').textContent = this.formatCurrency(data.netSalary / 12);
-        document.getElementById('grossAmount').textContent = this.formatCurrency(data.originalGrossSalary);
-        document.getElementById('totalDeductions').textContent = this.formatCurrency(totalDeductionsDisplay);
-        document.getElementById('incomeTax').textContent = this.formatCurrency(data.incomeTax);
-        document.getElementById('residentTax').textContent = this.formatCurrency(data.residentTax);
-        document.getElementById('healthInsurance').textContent = this.formatCurrency(data.socialInsurance.health);
-        document.getElementById('pensionInsurance').textContent = this.formatCurrency(data.socialInsurance.pension);
-        document.getElementById('employmentInsurance').textContent = this.formatCurrency(data.socialInsurance.employment);
-        
-        // Bonus calculation approximation
-        const prefectureKey = document.getElementById('prefecture').value;
-        const bonusSocialInsurance = this.calculateSocialInsurance(0, data.bonus, parseInt(document.getElementById('age').value, 10), data.employmentType, prefectureKey).total;
-        const bonusNet = data.bonus > 0 ? data.bonus - bonusSocialInsurance - (data.incomeTax * (data.bonus / (data.originalGrossSalary - data.companyHousingDeduction))) : 0;
+            // Safely update elements with null checks
+            this.safeUpdateElement('netSalary', this.formatCurrency(data.netSalary));
+            this.safeUpdateElement('monthlyNet', this.formatCurrency(data.netSalary / 12));
+            this.safeUpdateElement('grossAmount', this.formatCurrency(data.originalGrossSalary));
+            this.safeUpdateElement('totalDeductions', this.formatCurrency(totalDeductionsDisplay));
+            this.safeUpdateElement('incomeTax', this.formatCurrency(data.incomeTax));
+            this.safeUpdateElement('residentTax', this.formatCurrency(data.residentTax));
+            this.safeUpdateElement('healthInsurance', this.formatCurrency(data.socialInsurance.health));
+            this.safeUpdateElement('pensionInsurance', this.formatCurrency(data.socialInsurance.pension));
+            this.safeUpdateElement('employmentInsurance', this.formatCurrency(data.socialInsurance.employment));
+            
+            // Bonus calculation approximation
+            const prefectureKey = document.getElementById('prefecture')?.value || 'tokyo';
+            const ageElement = document.getElementById('age');
+            const age = ageElement ? parseInt(ageElement.value, 10) : 30;
+            
+            const bonusSocialInsurance = this.calculateSocialInsurance(0, data.bonus, age, data.employmentType, prefectureKey).total;
+            const bonusNet = data.bonus > 0 ? data.bonus - bonusSocialInsurance - (data.incomeTax * (data.bonus / (data.originalGrossSalary - data.companyHousingDeduction))) : 0;
 
-        document.getElementById('monthlyBase').textContent = this.formatCurrency((data.netSalary - bonusNet) / 12);
-        document.getElementById('bonusNet').textContent = this.formatCurrency(bonusNet);
-        
-        document.getElementById('nextYearResidentTax').textContent = this.formatCurrency(data.nextYearResidentTax);
+            this.safeUpdateElement('monthlyBase', this.formatCurrency((data.netSalary - bonusNet) / 12));
+            this.safeUpdateElement('bonusNet', this.formatCurrency(bonusNet));
+            this.safeUpdateElement('nextYearResidentTax', this.formatCurrency(data.nextYearResidentTax));
 
-        // 副業所得の表示
-        if (data.sideNetIncome > 0) {
-            document.getElementById('sideIncomeAmount').textContent = this.formatCurrency(data.sideNetIncome);
-            document.getElementById('sideIncomeBreakdown').style.display = 'flex';
-        } else {
-            document.getElementById('sideIncomeBreakdown').style.display = 'none';
-        }
-
-        // 各種節税額計算
-        this.calculateTaxSavings(data);
-
-        // 副業関連の智能建議
-        this.displaySideIncomeAdvice(data);
-
-        // AI個人化節税戦略
-        this.generateAIRecommendations(data);
-
-        // 計算過程の詳細を生成・表示
-        this.generateCalculationProcess(data);
-
-        // 社宅控除の表示
-        if (data.companyHousingDeduction > 0) {
-            const existingHousing = document.getElementById('companyHousingBreakdown');
-            if (!existingHousing) {
-                const housingItem = document.createElement('div');
-                housingItem.className = 'breakdown-item';
-                housingItem.id = 'companyHousingBreakdown';
-                housingItem.innerHTML = `
-                    <span class="breakdown-label">借り上げ社宅控除</span>
-                    <span class="breakdown-value">${this.formatCurrency(data.companyHousingDeduction)}</span>
-                `;
-                document.querySelector('.breakdown-grid').appendChild(housingItem);
+            // 副業所得の表示
+            if (data.sideNetIncome > 0) {
+                this.safeUpdateElement('sideIncomeAmount', this.formatCurrency(data.sideNetIncome));
+                this.safeSetStyle('sideIncomeBreakdown', 'display', 'flex');
             } else {
-                existingHousing.querySelector('.breakdown-value').textContent = this.formatCurrency(data.companyHousingDeduction);
+                this.safeSetStyle('sideIncomeBreakdown', 'display', 'none');
             }
-        }
 
-        // 賞与がない場合は非表示
-        const bonusBreakdown = document.getElementById('bonusBreakdown');
-        if (data.bonus > 0) {
-            bonusBreakdown.style.display = 'block';
+            // 各種節税額計算
+            this.calculateTaxSavings(data);
+
+            // 副業関連の智能建議
+            this.displaySideIncomeAdvice(data);
+
+            // AI個人化節税戦略
+            this.generateAIRecommendations(data);
+
+            // 計算過程の詳細を生成・表示
+            this.generateCalculationProcess(data);
+
+            // 社宅控除の表示
+            if (data.companyHousingDeduction > 0) {
+                const existingHousing = document.getElementById('companyHousingBreakdown');
+                if (!existingHousing) {
+                    const housingItem = document.createElement('div');
+                    housingItem.className = 'breakdown-item';
+                    housingItem.id = 'companyHousingBreakdown';
+                    housingItem.innerHTML = `
+                        <span class="breakdown-label">借り上げ社宅控除</span>
+                        <span class="breakdown-value">${this.formatCurrency(data.companyHousingDeduction)}</span>
+                    `;
+                    const breakdownGrid = document.querySelector('.breakdown-grid');
+                    if (breakdownGrid) {
+                        breakdownGrid.appendChild(housingItem);
+                    }
+                } else {
+                    const valueElement = existingHousing.querySelector('.breakdown-value');
+                    if (valueElement) {
+                        valueElement.textContent = this.formatCurrency(data.companyHousingDeduction);
+                    }
+                }
+            }
+
+            // 賞与がない場合は非表示
+            if (data.bonus > 0) {
+                this.safeSetStyle('bonusBreakdown', 'display', 'block');
+            } else {
+                this.safeSetStyle('bonusBreakdown', 'display', 'none');
+            }
+
+            // Show results section
+            const resultsElement = document.getElementById('results');
+            if (resultsElement) {
+                resultsElement.classList.remove('hidden');
+                resultsElement.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+        } catch (error) {
+            console.error('Error displaying results:', error);
+            this.showError('結果の表示中にエラーが発生しました');
+        }
+    }
+
+    safeUpdateElement(id, content) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = content;
         } else {
-            bonusBreakdown.style.display = 'none';
+            console.warn(`Element with id '${id}' not found`);
         }
+    }
 
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    safeSetStyle(id, property, value) {
+        const element = document.getElementById(id);
+        if (element && element.style) {
+            element.style[property] = value;
+        } else {
+            console.warn(`Element with id '${id}' not found or has no style property`);
+        }
     }
 
     calculateTaxSavings(data) {
-        // 現在の課税所得から所得税率を計算
-        const age = parseInt(document.getElementById('age').value, 10);
-        const employmentType = document.getElementById('employmentType').value;
-        const prefectureKey = document.getElementById('prefecture').value;
-        const grossSalary = data.originalGrossSalary - data.companyHousingDeduction;
-        
-        // 簡易的に課税所得を再計算（実際の計算と同じロジック）
-        const salaryDeduction = this.calculateSalaryDeduction(grossSalary);
-        const socialInsurance = this.calculateSocialInsurance(grossSalary / 12, data.bonus, age, employmentType, prefectureKey);
-        const basicDeduction = 480000;
-        const totalDeductions = socialInsurance.total + salaryDeduction + basicDeduction;
-        const taxableIncome = Math.max(0, grossSalary - totalDeductions);
-        
-        // 所得税率を計算
-        let incomeTaxRate = 0.05;
-        if (taxableIncome > 1950000) incomeTaxRate = 0.10;
-        if (taxableIncome > 3300000) incomeTaxRate = 0.20;
-        if (taxableIncome > 6950000) incomeTaxRate = 0.23;
-        if (taxableIncome > 9000000) incomeTaxRate = 0.33;
-        if (taxableIncome > 18000000) incomeTaxRate = 0.40;
-        if (taxableIncome > 40000000) incomeTaxRate = 0.45;
-        
-        // 復興特別所得税を含む
-        incomeTaxRate = incomeTaxRate * this.RATES.RECONSTRUCTION_SURTAX;
-        
-        // 住民税率（地域別）
-        const prefData = this.prefectureData[prefectureKey];
-        const residentTaxRate = prefData.prefTaxRate + prefData.cityTaxRate;
-        const totalTaxRate = incomeTaxRate + residentTaxRate;
+        try {
+            // 現在の課税所得から所得税率を計算
+            const ageElement = document.getElementById('age');
+            const employmentTypeElement = document.getElementById('employmentType');
+            const prefectureElement = document.getElementById('prefecture');
+            
+            if (!ageElement || !employmentTypeElement || !prefectureElement) {
+                console.warn('Required form elements not found for tax savings calculation');
+                return;
+            }
+            
+            const age = parseInt(ageElement.value, 10);
+            const employmentType = employmentTypeElement.value;
+            const prefectureKey = prefectureElement.value;
+            const grossSalary = data.originalGrossSalary - data.companyHousingDeduction;
+            
+            // 簡易的に課税所得を再計算（実際の計算と同じロジック）
+            const salaryDeduction = this.calculateSalaryDeduction(grossSalary);
+            const socialInsurance = this.calculateSocialInsurance(grossSalary / 12, data.bonus, age, employmentType, prefectureKey);
+            const basicDeduction = 480000;
+            const totalDeductions = socialInsurance.total + salaryDeduction + basicDeduction;
+            const taxableIncome = Math.max(0, grossSalary - totalDeductions);
+            
+            // 所得税率を計算
+            let incomeTaxRate = 0.05;
+            if (taxableIncome > 1950000) incomeTaxRate = 0.10;
+            if (taxableIncome > 3300000) incomeTaxRate = 0.20;
+            if (taxableIncome > 6950000) incomeTaxRate = 0.23;
+            if (taxableIncome > 9000000) incomeTaxRate = 0.33;
+            if (taxableIncome > 18000000) incomeTaxRate = 0.40;
+            if (taxableIncome > 40000000) incomeTaxRate = 0.45;
+            
+            // 復興特別所得税を含む
+            incomeTaxRate = incomeTaxRate * this.RATES.RECONSTRUCTION_SURTAX;
+            
+            // 住民税率（地域別）
+            const prefData = this.prefectureData[prefectureKey];
+            const residentTaxRate = prefData.prefTaxRate + prefData.cityTaxRate;
+            const totalTaxRate = incomeTaxRate + residentTaxRate;
 
-        // 1. ふるさと納税の実質節税額は別途確認が必要
-        document.getElementById('furusatoSavingsAmount').textContent = '別途計算要';
+            // 1. ふるさと納税の実質節税額は別途確認が必要
+            this.safeUpdateElement('furusatoSavingsAmount', '別途計算要');
 
-        // 2. iDeCoの節税額（年間最大拠出額：276,000円）
-        const idecoMaxContribution = 276000; // 23,000円 × 12ヶ月
-        const idecoSavings = idecoMaxContribution * totalTaxRate;
-        document.getElementById('idecoSavingsAmount').textContent = this.formatCurrency(idecoSavings);
+            // 2. iDeCoの節税額（年間最大拠出額：276,000円）
+            const idecoMaxContribution = 276000; // 23,000円 × 12ヶ月
+            const idecoSavings = idecoMaxContribution * totalTaxRate;
+            this.safeUpdateElement('idecoSavingsAmount', this.formatCurrency(idecoSavings));
 
-        // 3. つみたてNISAの節税額（年間40万円投資、5%利回りの利益に対する節税）
-        const nisaMaxInvestment = 400000;
-        const expectedReturn = 0.05;
-        const nisaProfit = nisaMaxInvestment * expectedReturn;
-        const nisaSavings = nisaProfit * totalTaxRate;
-        document.getElementById('nisaSavingsAmount').textContent = this.formatCurrency(nisaSavings);
+            // 3. つみたてNISAの節税額（年間40万円投資、5%利回りの利益に対する節税）
+            const nisaMaxInvestment = 400000;
+            const expectedReturn = 0.05;
+            const nisaProfit = nisaMaxInvestment * expectedReturn;
+            const nisaSavings = nisaProfit * totalTaxRate;
+            this.safeUpdateElement('nisaSavingsAmount', this.formatCurrency(nisaSavings));
 
-        // 4. 生命保険料控除の節税額（最大控除額：120,000円）
-        const maxInsuranceDeduction = 120000;
-        const insuranceSavings = maxInsuranceDeduction * totalTaxRate;
-        document.getElementById('insuranceSavingsAmount').textContent = this.formatCurrency(insuranceSavings);
+            // 4. 生命保険料控除の節税額（最大控除額：120,000円）
+            const maxInsuranceDeduction = 120000;
+            const insuranceSavings = maxInsuranceDeduction * totalTaxRate;
+            this.safeUpdateElement('insuranceSavingsAmount', this.formatCurrency(insuranceSavings));
+            
+        } catch (error) {
+            console.error('Error calculating tax savings:', error);
+        }
     }
 
     displaySideIncomeAdvice(data) {
-        const sideNetIncome = data.sideNetIncome || 0;
-        const sideIncomeAdvice = document.getElementById('sideIncomeAdvice');
-        
-        if (sideNetIncome > 0) {
-            sideIncomeAdvice.style.display = 'block';
+        try {
+            const sideNetIncome = data.sideNetIncome || 0;
+            const sideIncomeAdvice = document.getElementById('sideIncomeAdvice');
             
-            const adviceText = document.getElementById('sideIncomeAdviceText');
-            const warningText = document.getElementById('sideIncomeWarningText');
-            const warningLabel = document.querySelector('#sideIncomeWarning .savings-label');
+            if (!sideIncomeAdvice) {
+                console.warn('Side income advice element not found');
+                return;
+            }
             
-            if (sideNetIncome > 200000) {
-                // 20万円超：確定申告必要
-                adviceText.textContent = `副業所得が${this.formatCurrency(sideNetIncome)}のため、確定申告が必要です。経費を適切に計上することで節税できます。`;
-                warningText.textContent = '確定申告必須（3月15日まで）';
-                warningLabel.textContent = '⚠️ 必須手続き：';
+            if (sideNetIncome > 0) {
+                this.safeSetStyle('sideIncomeAdvice', 'display', 'block');
                 
-                // 警告色のスタイル設定
-                document.getElementById('sideIncomeWarning').style.borderLeftColor = '#e74c3c';
-                document.getElementById('sideIncomeWarning').style.background = 'linear-gradient(135deg, #ffeaea 0%, #ffe6e6 100%)';
+                const adviceText = document.getElementById('sideIncomeAdviceText');
+                const warningText = document.getElementById('sideIncomeWarningText');
+                const warningLabel = document.querySelector('#sideIncomeWarning .savings-label');
+                const warningElement = document.getElementById('sideIncomeWarning');
+                
+                if (sideNetIncome > 200000) {
+                    // 20万円超：確定申告必要
+                    if (adviceText) {
+                        adviceText.textContent = `副業所得が${this.formatCurrency(sideNetIncome)}のため、確定申告が必要です。経費を適切に計上することで節税できます。`;
+                    }
+                    if (warningText) {
+                        warningText.textContent = '確定申告必須（3月15日まで）';
+                    }
+                    if (warningLabel) {
+                        warningLabel.textContent = '⚠️ 必須手続き：';
+                    }
+                    
+                    // 警告色のスタイル設定
+                    if (warningElement && warningElement.style) {
+                        warningElement.style.borderLeftColor = '#e74c3c';
+                        warningElement.style.background = 'linear-gradient(135deg, #ffeaea 0%, #ffe6e6 100%)';
+                    }
+                } else {
+                    // 20万円以下：確定申告不要だが住民税申告は必要
+                    if (adviceText) {
+                        adviceText.textContent = `副業所得が${this.formatCurrency(sideNetIncome)}のため、確定申告は不要です。ただし住民税の申告は必要です。`;
+                    }
+                    if (warningText) {
+                        warningText.textContent = '住民税申告が必要';
+                    }
+                    if (warningLabel) {
+                        warningLabel.textContent = '💡 申告事項：';
+                    }
+                    
+                    // 注意色のスタイル設定
+                    if (warningElement && warningElement.style) {
+                        warningElement.style.borderLeftColor = '#f39c12';
+                        warningElement.style.background = 'linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%)';
+                    }
+                }
+                
+                // 経費活用のアドバイス
+                if (data.sideIncome > data.sideExpenses && adviceText) {
+                    const potentialSavings = (data.sideIncome - data.sideExpenses) * 0.3; // 概算節税額
+                    adviceText.textContent += ` 経費を増やすことで最大${this.formatCurrency(potentialSavings)}程度の節税が可能です。`;
+                }
             } else {
-                // 20万円以下：確定申告不要だが住民税申告は必要
-                adviceText.textContent = `副業所得が${this.formatCurrency(sideNetIncome)}のため、確定申告は不要です。ただし住民税の申告は必要です。`;
-                warningText.textContent = '住民税申告が必要';
-                warningLabel.textContent = '💡 申告事項：';
-                
-                // 注意色のスタイル設定
-                document.getElementById('sideIncomeWarning').style.borderLeftColor = '#f39c12';
-                document.getElementById('sideIncomeWarning').style.background = 'linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%)';
+                this.safeSetStyle('sideIncomeAdvice', 'display', 'none');
             }
-            
-            // 経費活用のアドバイス
-            if (data.sideIncome > data.sideExpenses) {
-                const potentialSavings = (data.sideIncome - data.sideExpenses) * 0.3; // 概算節税額
-                adviceText.textContent += ` 経費を増やすことで最大${this.formatCurrency(potentialSavings)}程度の節税が可能です。`;
-            }
-        } else {
-            sideIncomeAdvice.style.display = 'none';
+        } catch (error) {
+            console.error('Error displaying side income advice:', error);
         }
     }
 
     generateAIRecommendations(data) {
-        const age = parseInt(document.getElementById('age').value, 10);
-        const employmentType = document.getElementById('employmentType').value;
-        const grossSalary = data.originalGrossSalary;
-        const sideNetIncome = data.sideNetIncome || 0;
-        
-        // ユーザープロフィール分析
-        const userProfile = this.analyzeUserProfile(grossSalary, age, employmentType, sideNetIncome);
-        
-        // 個人化された推奨事項を生成
-        const recommendations = this.generatePersonalizedRecommendations(data, userProfile);
-        
-        // AI建議区域を表示
-        document.getElementById('aiRecommendations').style.display = 'block';
-        
-        // プロフィール要約を表示
-        document.getElementById('profileSummary').textContent = userProfile.summary;
-        
-        // 推奨事項を表示
-        this.renderRecommendations(recommendations);
-        
-        // 戦略要約を生成
-        this.generateStrategySummary(recommendations, userProfile);
-        
-        // プラン比較機能を初期化
-        this.initializePlanComparison(recommendations, data);
+        try {
+            const ageElement = document.getElementById('age');
+            const employmentTypeElement = document.getElementById('employmentType');
+            
+            if (!ageElement || !employmentTypeElement) {
+                console.warn('Required elements not found for AI recommendations');
+                return;
+            }
+            
+            const age = parseInt(ageElement.value, 10);
+            const employmentType = employmentTypeElement.value;
+            const grossSalary = data.originalGrossSalary;
+            const sideNetIncome = data.sideNetIncome || 0;
+            
+            // ユーザープロフィール分析
+            const userProfile = this.analyzeUserProfile(grossSalary, age, employmentType, sideNetIncome);
+            
+            // 個人化された推奨事項を生成
+            const recommendations = this.generatePersonalizedRecommendations(data, userProfile);
+            
+            // AI建議区域を表示
+            this.safeSetStyle('aiRecommendations', 'display', 'block');
+            
+            // プロフィール要約を表示
+            this.safeUpdateElement('profileSummary', userProfile.summary);
+            
+            // 推奨事項を表示
+            this.renderRecommendations(recommendations);
+            
+            // 戦略要約を生成
+            this.generateStrategySummary(recommendations, userProfile);
+            
+            // プラン比較機能を初期化
+            this.initializePlanComparison(recommendations, data);
+        } catch (error) {
+            console.error('Error generating AI recommendations:', error);
+        }
     }
 
     analyzeUserProfile(grossSalary, age, employmentType, sideNetIncome) {
@@ -911,54 +999,67 @@ class JapanSalaryCalculator {
     }
 
     renderRecommendations(recommendations) {
-        const grid = document.getElementById('recommendationGrid');
-        grid.innerHTML = '';
-        
-        recommendations.slice(0, 6).forEach(rec => { // 最大6つ表示
-            const item = document.createElement('div');
-            item.className = `recommendation-item ${rec.priority}-priority`;
+        try {
+            const grid = document.getElementById('recommendationGrid');
+            if (!grid) {
+                console.warn('Recommendation grid element not found');
+                return;
+            }
             
-            const priorityIcon = rec.priority === 'high' ? '⭐' : rec.priority === 'medium' ? '🔥' : '💡';
+            grid.innerHTML = '';
             
-            item.innerHTML = `
-                <div class="recommendation-title">
-                    ${priorityIcon} ${rec.title}
-                </div>
-                <div class="recommendation-desc">
-                    ${rec.description}
-                </div>
-                <div class="recommendation-impact">
-                    <span>節税効果</span>
-                    <span class="impact-amount">${this.formatCurrency(rec.impact)}</span>
-                </div>
-            `;
-            
-            grid.appendChild(item);
-        });
+            recommendations.slice(0, 6).forEach(rec => { // 最大6つ表示
+                const item = document.createElement('div');
+                item.className = `recommendation-item ${rec.priority}-priority`;
+                
+                const priorityIcon = rec.priority === 'high' ? '⭐' : rec.priority === 'medium' ? '🔥' : '💡';
+                
+                item.innerHTML = `
+                    <div class="recommendation-title">
+                        ${priorityIcon} ${rec.title}
+                    </div>
+                    <div class="recommendation-desc">
+                        ${rec.description}
+                    </div>
+                    <div class="recommendation-impact">
+                        <span>節税効果</span>
+                        <span class="impact-amount">${this.formatCurrency(rec.impact)}</span>
+                    </div>
+                `;
+                
+                grid.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Error rendering recommendations:', error);
+        }
     }
 
     generateStrategySummary(recommendations, profile) {
-        const totalSavings = recommendations.reduce((sum, rec) => sum + rec.impact, 0);
-        const highPriorityItems = recommendations.filter(rec => rec.priority === 'high').length;
-        
-        let strategyText = `分析結果：年間最大${this.formatCurrency(totalSavings)}の節税が可能です。`;
-        
-        if (highPriorityItems > 0) {
-            strategyText += ` 特に優先度の高い${highPriorityItems}つの項目から始めることをお勧めします。`;
+        try {
+            const totalSavings = recommendations.reduce((sum, rec) => sum + rec.impact, 0);
+            const highPriorityItems = recommendations.filter(rec => rec.priority === 'high').length;
+            
+            let strategyText = `分析結果：年間最大${this.formatCurrency(totalSavings)}の節税が可能です。`;
+            
+            if (highPriorityItems > 0) {
+                strategyText += ` 特に優先度の高い${highPriorityItems}つの項目から始めることをお勧めします。`;
+            }
+            
+            // 個人化されたアドバイス
+            if (profile.ageGroup === 'young') {
+                strategyText += ' 若い世代の方は長期投資（つみたてNISA、iDeCo）を重視し、将来の資産形成と節税を両立させましょう。';
+            } else if (profile.incomeLevel === 'high') {
+                strategyText += ' 高収入の方は複数の節税手法を組み合わせることで、効果的に税負担を軽減できます。';
+            }
+            
+            if (profile.employmentType === 'jieigyou' || profile.employmentType === 'freelance') {
+                strategyText += ' 自営業・フリーランスの方は経費の適切な計上も重要な節税手法です。';
+            }
+            
+            this.safeUpdateElement('strategyText', strategyText);
+        } catch (error) {
+            console.error('Error generating strategy summary:', error);
         }
-        
-        // 個人化されたアドバイス
-        if (profile.ageGroup === 'young') {
-            strategyText += ' 若い世代の方は長期投資（つみたてNISA、iDeCo）を重視し、将来の資産形成と節税を両立させましょう。';
-        } else if (profile.incomeLevel === 'high') {
-            strategyText += ' 高収入の方は複数の節税手法を組み合わせることで、効果的に税負担を軽減できます。';
-        }
-        
-        if (profile.employmentType === 'jieigyou' || profile.employmentType === 'freelance') {
-            strategyText += ' 自営業・フリーランスの方は経費の適切な計上も重要な節税手法です。';
-        }
-        
-        document.getElementById('strategyText').textContent = strategyText;
     }
 
     generateInsuranceRecommendation(profile, totalTaxRate) {
