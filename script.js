@@ -204,7 +204,7 @@ class JapanSalaryCalculator {
     }
 
     setupNumberFormatting() {
-        const numberInputs = ['grossSalary', 'lastYearSalary', 'bonus', 'companyHousing', 'sideIncome', 'sideExpenses', 'medicalExpenses', 'lifeInsurance', 'donation'];
+        const numberInputs = ['grossSalary', 'lastYearSalary', 'bonus', 'housingRentTotal', 'housingRentEmployee', 'sideIncome', 'sideExpenses', 'medicalExpenses', 'lifeInsurance', 'donation'];
         numberInputs.forEach(inputId => {
             const input = document.getElementById(inputId);
             if (input) {
@@ -265,7 +265,8 @@ class JapanSalaryCalculator {
             const prefectureKey = document.getElementById('prefecture').value;
             const employmentType = document.getElementById('employmentType').value;
             const bonus = this.parseManEnNumber(document.getElementById('bonus').value);
-            const companyHousingMonthly = this.parseManEnNumber(document.getElementById('companyHousing').value);
+            const housingRentTotal = this.parseManEnNumber(document.getElementById('housingRentTotal').value);
+            const housingRentEmployee = this.parseManEnNumber(document.getElementById('housingRentEmployee').value);
             const sideIncome = this.parseManEnNumber(document.getElementById('sideIncome').value);
             const sideExpenses = this.parseManEnNumber(document.getElementById('sideExpenses').value);
 
@@ -273,7 +274,8 @@ class JapanSalaryCalculator {
             this.validateInput(originalGrossSalary, 0, 100000000, '年収');
             this.validateInput(age, 18, 100, '年齢');
             this.validateInput(bonus, 0, 50000000, '賞与');
-            this.validateInput(companyHousingMonthly, 0, 1000000, '社宅費');
+            this.validateInput(housingRentTotal, 0, 1000000, '社宅家賃総額');
+            this.validateInput(housingRentEmployee, 0, housingRentTotal || 1000000, '社宅自己負担額');
             this.validateInput(sideIncome, 0, 50000000, '副業収入');
             this.validateInput(sideExpenses, 0, sideIncome, '副業経費');
 
@@ -281,14 +283,20 @@ class JapanSalaryCalculator {
                 throw new Error('年収と年齢は必須項目です');
             }
 
-            const companyHousingYearly = companyHousingMonthly * 12;
-            // 社宅費は税後の手取りから差し引くため、課税所得からは引かない
-            const taxableGrossSalary = originalGrossSalary;
+            // 借り上げ社宅の処理
+            // 会社負担分（非課税）= 家賃総額 - 自己負担額
+            // 自己負担額が適正額（通常は賃貸料相当額の50%程度）以上の場合、会社負担分は非課税
+            const housingRentTotalYearly = housingRentTotal * 12;
+            const housingRentEmployeeYearly = housingRentEmployee * 12;
+            const housingCompanySubsidy = housingRentTotalYearly - housingRentEmployeeYearly;  // 非課税部分
+
+            // 課税対象年収 = 総年収 - 会社負担社宅費（非課税）
+            const taxableGrossSalary = originalGrossSalary - housingCompanySubsidy;
             const sideNetIncome = Math.max(0, sideIncome - sideExpenses);
 
-            const monthlySalaryTotal = originalGrossSalary - bonus;
+            const monthlySalaryTotal = taxableGrossSalary - bonus;
             if (monthlySalaryTotal < 0) {
-                throw new Error('賞与額が年収を超えています');
+                throw new Error('賞与額が課税年収を超えています');
             }
             const monthlySalary = monthlySalaryTotal / 12;
 
@@ -303,14 +311,16 @@ class JapanSalaryCalculator {
                 age,
                 prefectureKey,
                 employmentType,
-                companyHousingYearly,
+                housingRentEmployeeYearly,  // 員工自己負担額（从手取り扣除）
                 ...advancedOptions
             });
 
-            const displayData = { 
-                ...calculations, 
-                originalGrossSalary, 
-                companyHousingDeduction: companyHousingYearly, 
+            const displayData = {
+                ...calculations,
+                originalGrossSalary,
+                housingCompanySubsidy,  // 会社負担分（非課税）
+                housingRentEmployeeYearly,  // 員工負担分（从工资扣）
+                housingRentTotalYearly,  // 家賃総額
                 bonus,
                 sideIncome,
                 sideExpenses,
@@ -379,9 +389,9 @@ class JapanSalaryCalculator {
         const taxableForResidentTax = Math.max(0, lastYearTotalIncome - totalDeductionsForResidentTax);
         const residentTax = this.calculateResidentTax(taxableForResidentTax, params.prefectureKey);
 
-        // 手取り計算（副業所得込み、社宅費控除）
-        // 社宅費は給与から天引きされるため、税後の手取りから差し引く
-        const netSalary = totalIncome - (socialInsurance.total + incomeTax + residentTax + (params.companyHousingYearly || 0));
+        // 手取り計算（副業所得込み、社宅自己負担額控除）
+        // 社宅の自己負担額は給与から天引きされるため、税後の手取りから差し引く
+        const netSalary = totalIncome - (socialInsurance.total + incomeTax + residentTax + (params.housingRentEmployeeYearly || 0));
         
         // 来年の住民税計算（今年の副業所得込み、地域別税率使用）
         const nextYearResidentTaxableIncome = Math.max(0, totalIncome - (socialInsurance.total + salaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeductionResident + otherDeductionsTotal));
@@ -524,7 +534,7 @@ class JapanSalaryCalculator {
 
     displayResults(data) {
         try {
-            const totalDeductionsDisplay = data.socialInsurance.total + data.incomeTax + data.residentTax + data.companyHousingDeduction;
+            const totalDeductionsDisplay = data.socialInsurance.total + data.incomeTax + data.residentTax + (data.housingRentEmployeeYearly || 0);
 
             // Safely update elements with null checks
             this.safeUpdateElement('netSalary', this.formatCurrency(data.netSalary));
@@ -543,7 +553,8 @@ class JapanSalaryCalculator {
             const age = ageElement ? parseInt(ageElement.value, 10) : 30;
             
             const bonusSocialInsurance = this.calculateSocialInsurance(0, data.bonus, age, data.employmentType, prefectureKey).total;
-            const bonusNet = data.bonus > 0 ? data.bonus - bonusSocialInsurance - (data.incomeTax * (data.bonus / (data.originalGrossSalary - data.companyHousingDeduction))) : 0;
+            const taxableGrossSalary = data.originalGrossSalary - (data.housingCompanySubsidy || 0);
+            const bonusNet = data.bonus > 0 ? data.bonus - bonusSocialInsurance - (data.incomeTax * (data.bonus / taxableGrossSalary)) : 0;
 
             this.safeUpdateElement('monthlyBase', this.formatCurrency((data.netSalary - bonusNet) / 12));
             this.safeUpdateElement('bonusNet', this.formatCurrency(bonusNet));
@@ -569,25 +580,68 @@ class JapanSalaryCalculator {
             // 計算過程の詳細を生成・表示
             this.generateCalculationProcess(data);
 
-            // 社宅控除の表示
-            if (data.companyHousingDeduction > 0) {
-                const existingHousing = document.getElementById('companyHousingBreakdown');
-                if (!existingHousing) {
-                    const housingItem = document.createElement('div');
-                    housingItem.className = 'breakdown-item';
-                    housingItem.id = 'companyHousingBreakdown';
-                    housingItem.innerHTML = `
-                        <span class="breakdown-label">給与天引き家賃（年額）</span>
-                        <span class="breakdown-value">${this.formatCurrency(data.companyHousingDeduction)}</span>
+            // 社宅費用の表示
+            if (data.housingRentTotalYearly > 0) {
+                // 家賃総額の表示
+                const existingTotal = document.getElementById('housingRentTotalBreakdown');
+                if (!existingTotal) {
+                    const totalItem = document.createElement('div');
+                    totalItem.className = 'breakdown-item';
+                    totalItem.id = 'housingRentTotalBreakdown';
+                    totalItem.innerHTML = `
+                        <span class="breakdown-label">社宅家賃総額（年額）</span>
+                        <span class="breakdown-value">${this.formatCurrency(data.housingRentTotalYearly)}</span>
                     `;
                     const breakdownGrid = document.querySelector('.breakdown-grid');
                     if (breakdownGrid) {
-                        breakdownGrid.appendChild(housingItem);
+                        breakdownGrid.appendChild(totalItem);
                     }
                 } else {
-                    const valueElement = existingHousing.querySelector('.breakdown-value');
+                    const valueElement = existingTotal.querySelector('.breakdown-value');
                     if (valueElement) {
-                        valueElement.textContent = this.formatCurrency(data.companyHousingDeduction);
+                        valueElement.textContent = this.formatCurrency(data.housingRentTotalYearly);
+                    }
+                }
+
+                // 自己負担額の表示
+                const existingEmployee = document.getElementById('housingRentEmployeeBreakdown');
+                if (!existingEmployee) {
+                    const employeeItem = document.createElement('div');
+                    employeeItem.className = 'breakdown-item';
+                    employeeItem.id = 'housingRentEmployeeBreakdown';
+                    employeeItem.innerHTML = `
+                        <span class="breakdown-label">└ 自己負担（天引き）</span>
+                        <span class="breakdown-value">${this.formatCurrency(data.housingRentEmployeeYearly)}</span>
+                    `;
+                    const breakdownGrid = document.querySelector('.breakdown-grid');
+                    if (breakdownGrid) {
+                        breakdownGrid.appendChild(employeeItem);
+                    }
+                } else {
+                    const valueElement = existingEmployee.querySelector('.breakdown-value');
+                    if (valueElement) {
+                        valueElement.textContent = this.formatCurrency(data.housingRentEmployeeYearly);
+                    }
+                }
+
+                // 会社負担（非課税）の表示
+                const existingCompany = document.getElementById('housingCompanySubsidyBreakdown');
+                if (!existingCompany) {
+                    const companyItem = document.createElement('div');
+                    companyItem.className = 'breakdown-item';
+                    companyItem.id = 'housingCompanySubsidyBreakdown';
+                    companyItem.innerHTML = `
+                        <span class="breakdown-label">└ 会社負担（非課税）</span>
+                        <span class="breakdown-value" style="color: #27ae60;">${this.formatCurrency(data.housingCompanySubsidy)}</span>
+                    `;
+                    const breakdownGrid = document.querySelector('.breakdown-grid');
+                    if (breakdownGrid) {
+                        breakdownGrid.appendChild(companyItem);
+                    }
+                } else {
+                    const valueElement = existingCompany.querySelector('.breakdown-value');
+                    if (valueElement) {
+                        valueElement.textContent = this.formatCurrency(data.housingCompanySubsidy);
                     }
                 }
             }
@@ -645,8 +699,8 @@ class JapanSalaryCalculator {
             const age = parseInt(ageElement.value, 10);
             const employmentType = employmentTypeElement.value;
             const prefectureKey = prefectureElement.value;
-            const grossSalary = data.originalGrossSalary - data.companyHousingDeduction;
-            
+            const grossSalary = data.originalGrossSalary - (data.housingCompanySubsidy || 0);
+
             // 簡易的に課税所得を再計算（実際の計算と同じロジック）
             const salaryDeduction = this.calculateSalaryDeduction(grossSalary);
             const socialInsurance = this.calculateSocialInsurance(grossSalary / 12, data.bonus, age, employmentType, prefectureKey);
@@ -898,8 +952,8 @@ class JapanSalaryCalculator {
         const age = parseInt(document.getElementById('age').value, 10);
         const employmentType = document.getElementById('employmentType').value;
         const prefectureKey = document.getElementById('prefecture').value;
-        const grossSalary = data.originalGrossSalary - data.companyHousingDeduction;
-        
+        const grossSalary = data.originalGrossSalary - (data.housingCompanySubsidy || 0);
+
         const salaryDeduction = this.calculateSalaryDeduction(grossSalary);
         const socialInsurance = this.calculateSocialInsurance(grossSalary / 12, data.bonus, age, employmentType, prefectureKey);
         const taxableIncome = Math.max(0, grossSalary - salaryDeduction - socialInsurance.total - 480000);
@@ -1348,8 +1402,8 @@ class JapanSalaryCalculator {
         const age = parseInt(document.getElementById('age').value, 10);
         const employmentType = document.getElementById('employmentType').value;
         const prefectureKey = document.getElementById('prefecture').value;
-        const grossSalary = data.originalGrossSalary - data.companyHousingDeduction;
-        
+        const grossSalary = data.originalGrossSalary - (data.housingCompanySubsidy || 0);
+
         // Generate detailed explanations for each tab
         this.generateIncomeTaxProcess(data, grossSalary, age, employmentType, prefectureKey);
         this.generateResidentTaxProcess(data, grossSalary, age, employmentType, prefectureKey);
