@@ -593,7 +593,7 @@ class JapanSalaryCalculator {
             const resultsElement = document.getElementById('results');
             if (resultsElement) {
                 resultsElement.classList.remove('hidden');
-                resultsElement.scrollIntoView({ behavior: 'smooth' });
+                // Removed auto-scroll to allow users to review input before viewing results
             }
             
         } catch (error) {
