@@ -282,16 +282,13 @@ class JapanSalaryCalculator {
             }
 
             const companyHousingYearly = companyHousingMonthly * 12;
-            const taxableGrossSalary = originalGrossSalary - companyHousingYearly;
+            // 社宅費は税後の手取りから差し引くため、課税所得からは引かない
+            const taxableGrossSalary = originalGrossSalary;
             const sideNetIncome = Math.max(0, sideIncome - sideExpenses);
 
-            if (taxableGrossSalary < 0) {
-                throw new Error('社宅費が年収を超えています');
-            }
-            
-            const monthlySalaryTotal = taxableGrossSalary - bonus;
+            const monthlySalaryTotal = originalGrossSalary - bonus;
             if (monthlySalaryTotal < 0) {
-                throw new Error('賞与額が年収（社宅費控除後）を超えています');
+                throw new Error('賞与額が年収を超えています');
             }
             const monthlySalary = monthlySalaryTotal / 12;
 
@@ -306,6 +303,7 @@ class JapanSalaryCalculator {
                 age,
                 prefectureKey,
                 employmentType,
+                companyHousingYearly,
                 ...advancedOptions
             });
 
@@ -377,8 +375,9 @@ class JapanSalaryCalculator {
         const taxableForResidentTax = Math.max(0, lastYearTotalIncome - totalDeductionsForResidentTax);
         const residentTax = this.calculateResidentTax(taxableForResidentTax, params.prefectureKey);
 
-        // 手取り計算（副業所得込み）
-        const netSalary = totalIncome - (socialInsurance.total + incomeTax + residentTax);
+        // 手取り計算（副業所得込み、社宅費控除）
+        // 社宅費は給与から天引きされるため、税後の手取りから差し引く
+        const netSalary = totalIncome - (socialInsurance.total + incomeTax + residentTax + (params.companyHousingYearly || 0));
         
         // 来年の住民税計算（今年の副業所得込み、地域別税率使用）
         const nextYearResidentTaxableIncome = Math.max(0, totalIncome - (socialInsurance.total + salaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeduction + otherDeductionsTotal));
@@ -567,7 +566,7 @@ class JapanSalaryCalculator {
                     housingItem.className = 'breakdown-item';
                     housingItem.id = 'companyHousingBreakdown';
                     housingItem.innerHTML = `
-                        <span class="breakdown-label">借り上げ社宅控除</span>
+                        <span class="breakdown-label">給与天引き家賃（年額）</span>
                         <span class="breakdown-value">${this.formatCurrency(data.companyHousingDeduction)}</span>
                     `;
                     const breakdownGrid = document.querySelector('.breakdown-grid');
