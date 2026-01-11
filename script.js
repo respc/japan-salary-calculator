@@ -226,31 +226,11 @@ class JapanSalaryCalculator {
         if (!form) {
             throw new Error('Required form element not found');
         }
-        
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleCalculation();
         });
-
-        // Add auto-calculation with debouncing for better UX
-        const inputs = form.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            input.addEventListener('input', this.debounce(() => {
-                this.autoCalculate();
-            }, 1000));
-        });
-    }
-
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
     }
 
     showLoading(show = true) {
@@ -274,16 +254,6 @@ class JapanSalaryCalculator {
             this.calculateSalary();
         } finally {
             this.showLoading(false);
-        }
-    }
-
-    autoCalculate() {
-        // Only auto-calculate if required fields are filled
-        const grossSalary = document.getElementById('grossSalary').value;
-        const age = document.getElementById('age').value;
-        
-        if (grossSalary && age) {
-            this.handleCalculation();
         }
     }
 
@@ -623,7 +593,7 @@ class JapanSalaryCalculator {
             const resultsElement = document.getElementById('results');
             if (resultsElement) {
                 resultsElement.classList.remove('hidden');
-                resultsElement.scrollIntoView({ behavior: 'smooth' });
+                // Removed auto-scroll to allow users to review input before viewing results
             }
             
         } catch (error) {
