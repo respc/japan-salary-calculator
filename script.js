@@ -9,10 +9,10 @@ class JapanSalaryCalculator {
                 RECONSTRUCTION_SURTAX: 1.021,
             };
             this.CAPS = {
-                HEALTH_INSURANCE_SMR: 650000,
-                PENSION_INSURANCE_SMR: 650000,
-                HEALTH_INSURANCE_SBA_YEARLY: 5730000,
-                PENSION_INSURANCE_SBA_PER_PAYMENT: 1500000,
+                HEALTH_INSURANCE_SMR: 1390000,  // 協会けんぽ標準報酬月額上限（2024年第50等級）
+                PENSION_INSURANCE_SMR: 650000,  // 厚生年金標準報酬月額上限（2024年第32等級）
+                HEALTH_INSURANCE_SBA_YEARLY: 5730000,  // 健康保険賞与年間上限
+                PENSION_INSURANCE_SBA_PER_PAYMENT: 1500000,  // 厚生年金賞与1回あたり上限
             };
             this.prefectureData = this.initializePrefectureData();
             this.currentRecommendations = [];
@@ -350,14 +350,16 @@ class JapanSalaryCalculator {
     performCalculations(params) {
         const socialInsurance = this.calculateSocialInsurance(params.monthlySalary, params.bonus, params.age, params.employmentType, params.prefectureKey);
         const salaryDeduction = this.calculateSalaryDeduction(params.taxableGrossSalary);
-        
-        // 副業所得の処理（給与所得に雑所得を合算）
+
+        // 副業所得の処理（給与収入に雑所得を合算）
+        // 注：totalIncomeは正確には「総収入金額」。課税所得は後で給与所得控除を差し引いて計算
         const totalIncome = params.taxableGrossSalary + (params.sideNetIncome || 0);
         
-        const basicDeduction = 480000;
-        const spouseDeduction = params.hasSpouse ? 380000 : 0;
-        const dependentDeduction = params.dependents * 380000;
-        const disabledDependentDeduction = params.disabledDependents * 270000;
+        // 所得税用の控除額
+        const basicDeduction = 480000;  // 基礎控除（所得税）
+        const spouseDeduction = params.hasSpouse ? 380000 : 0;  // 配偶者控除（所得税）
+        const dependentDeduction = params.dependents * 380000;  // 扶養控除（所得税）
+        const disabledDependentDeduction = params.disabledDependents * 270000;  // 障害者控除（所得税）
         const lifeInsuranceDeduction = Math.min(params.lifeInsurance, 120000);
         const medicalDeduction = Math.max(0, params.medicalExpenses - 100000);
         const otherDeductionsTotal = medicalDeduction + lifeInsuranceDeduction + params.donation;
@@ -371,7 +373,9 @@ class JapanSalaryCalculator {
         const lastYearTotalIncome = params.lastYearSalary + (params.sideNetIncome || 0);
         const lastYearSocialInsurance = this.calculateSocialInsurance(lastYearTotalIncome / 12, 0, params.age, params.employmentType, params.prefectureKey).total;
         const lastYearSalaryDeduction = this.calculateSalaryDeduction(params.lastYearSalary);
-        const totalDeductionsForResidentTax = lastYearSocialInsurance + lastYearSalaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeduction + otherDeductionsTotal;
+        // 住民税用の控除額（所得税と金額が異なる）
+        const disabledDependentDeductionResident = params.disabledDependents * 260000;  // 障害者控除（住民税）
+        const totalDeductionsForResidentTax = lastYearSocialInsurance + lastYearSalaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeductionResident + otherDeductionsTotal;
         const taxableForResidentTax = Math.max(0, lastYearTotalIncome - totalDeductionsForResidentTax);
         const residentTax = this.calculateResidentTax(taxableForResidentTax, params.prefectureKey);
 
@@ -380,7 +384,7 @@ class JapanSalaryCalculator {
         const netSalary = totalIncome - (socialInsurance.total + incomeTax + residentTax + (params.companyHousingYearly || 0));
         
         // 来年の住民税計算（今年の副業所得込み、地域別税率使用）
-        const nextYearResidentTaxableIncome = Math.max(0, totalIncome - (socialInsurance.total + salaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeduction + otherDeductionsTotal));
+        const nextYearResidentTaxableIncome = Math.max(0, totalIncome - (socialInsurance.total + salaryDeduction + 430000 + (params.hasSpouse ? 330000 : 0) + (params.dependents * 330000) + disabledDependentDeductionResident + otherDeductionsTotal));
         const nextYearResidentTax = this.calculateResidentTax(nextYearResidentTaxableIncome, params.prefectureKey);
         
         const furusatoLimit = this.calculateFurusatoLimit(taxableForIncomeTax, nextYearResidentTax - this.prefectureData[params.prefectureKey].flatRate);
@@ -417,12 +421,19 @@ class JapanSalaryCalculator {
         const prefData = this.prefectureData[prefectureKey];
         const smrHealth = Math.min(monthlySalary, this.CAPS.HEALTH_INSURANCE_SMR);
         const smrPension = Math.min(monthlySalary, this.CAPS.PENSION_INSURANCE_SMR);
-        const sba = Math.floor(bonus / 1000) * 1000;
+        const sba = Math.floor(bonus / 1000) * 1000;  // 賞与は千円未満切り捨て
 
         const healthRate = prefData.healthInsuranceRate + (age >= 40 ? prefData.careInsuranceRate : 0);
 
-        const healthIns = (smrHealth * 12 + Math.min(sba, this.CAPS.HEALTH_INSURANCE_SBA_YEARLY)) * healthRate / 2;
-        const pensionIns = (smrPension * 12 + Math.min(sba, this.CAPS.PENSION_INSURANCE_SBA_PER_PAYMENT)) * this.RATES.PENSION_INSURANCE / 2;
+        // 月額部分と賞与部分を分けて計算（正しい方法）
+        const healthInsMonthly = smrHealth * 12 * healthRate / 2;
+        const healthInsBonus = Math.min(sba, this.CAPS.HEALTH_INSURANCE_SBA_YEARLY) * healthRate / 2;
+        const healthIns = healthInsMonthly + healthInsBonus;
+
+        const pensionInsMonthly = smrPension * 12 * this.RATES.PENSION_INSURANCE / 2;
+        const pensionInsBonus = Math.min(sba, this.CAPS.PENSION_INSURANCE_SBA_PER_PAYMENT) * this.RATES.PENSION_INSURANCE / 2;
+        const pensionIns = pensionInsMonthly + pensionInsBonus;
+
         const employmentIns = (monthlySalary * 12 + bonus) * this.RATES.EMPLOYMENT_INSURANCE;
 
         const result = { health: Math.round(healthIns), pension: Math.round(pensionIns), employment: Math.round(employmentIns) };
