@@ -1407,3 +1407,472 @@ select:focus {
         font-size: 1.3rem;
     }
 }
+
+/* ===================================
+   個人事業主モード専用スタイル
+   =================================== */
+
+/* Deduction Tracker Styles */
+.deduction-status-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.deduction-status-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.deduction-status-card.highlight-card {
+    border-color: #f093fb;
+    background: linear-gradient(135deg, #fff 0%, #fff5fb 100%);
+}
+
+.deduction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.deduction-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.excellent {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.good {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-badge.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.unused {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.progress-bar-container {
+    margin: 15px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+    border-radius: 12px;
+    position: relative;
+}
+
+.progress-fill.excellent {
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+}
+
+.progress-fill.good {
+    background: linear-gradient(90deg, #2196F3, #64B5F6);
+}
+
+.progress-fill.warning {
+    background: linear-gradient(90deg, #FF9800, #FFB74D);
+}
+
+.progress-fill.danger {
+    background: linear-gradient(90deg, #f44336, #ef5350);
+}
+
+.progress-fill.unused {
+    background: #ddd;
+    width: 0% !important;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.usage-amount {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.deduction-recommendation {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.deduction-recommendation.highlight-text {
+    background: #fff3e0;
+    border-left-color: #ff9800;
+    font-weight: 600;
+    color: #e65100;
+}
+
+/* Tax Tip Cards */
+.tax-tip-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.tax-tip-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.tip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tip-rank {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.tip-priority {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.tip-priority.priority-highest {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.tip-priority.priority-high {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.tip-priority.priority-medium {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.tip-priority.priority-low {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.tip-title {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin: 15px 0;
+}
+
+.tip-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.tip-savings {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.savings-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #c8e6c9;
+}
+
+.savings-total .label {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.savings-total .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1b5e20;
+}
+
+.savings-breakdown {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.9rem;
+    color: #558b2f;
+}
+
+.tip-meta {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.tip-steps {
+    margin: 15px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.tip-steps summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 10px;
+}
+
+.tip-steps ol {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.tip-steps li {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.tip-warnings {
+    background: #fff3cd;
+    border-left: 4px solid #ff9800;
+    padding: 12px;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.tip-warnings ul {
+    margin: 8px 0 0 20px;
+    padding: 0;
+}
+
+.tip-warnings li {
+    margin: 5px 0;
+}
+
+.tip-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.tip-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tip-link:hover {
+    background: #764ba2;
+    transform: translateX(3px);
+}
+
+/* More Tips Card */
+.more-tips-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.more-tips-content h4 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.upgrade-benefits {
+    margin: 20px 0;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.upgrade-benefits ul {
+    list-style: none;
+    padding: 0;
+}
+
+.upgrade-benefits li {
+    padding: 8px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.upgrade-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.upgrade-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Results Section Styles */
+.result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.result-card h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.result-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.result-item:hover {
+    background: #e9ecef;
+}
+
+.result-item.highlight {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+    border-left: 4px solid #ff9800;
+    font-weight: 600;
+}
+
+.result-item.success {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-left: 4px solid #4CAF50;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.result-item .label {
+    color: #495057;
+}
+
+.result-item .value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.tax-saving-summary {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.tax-saving-summary p {
+    font-size: 1.3rem;
+    color: #e65100;
+    margin: 0;
+}
+
+.highlight-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #d84315;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tip-savings {
+        padding: 12px;
+    }
+
+    .savings-breakdown {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .tip-actions {
+        flex-direction: column;
+    }
+
+    .tip-link {
+        text-align: center;
+    }
+}
