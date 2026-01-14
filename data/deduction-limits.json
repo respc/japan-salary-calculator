@@ -1,0 +1,504 @@
+{
+  "青色申告特別控除": {
+    "id": "aoiro_deduction",
+    "type": "income_deduction",
+    "options": {
+      "etax_or_digital": {
+        "amount": 650000,
+        "label": "65万円（e-Tax申告または電子帳簿保存）",
+        "conditions": ["青色申告承認", "複式簿記", "e-Tax申告または優良電子帳簿保存"]
+      },
+      "paper_filing": {
+        "amount": 550000,
+        "label": "55万円（紙での申告）",
+        "conditions": ["青色申告承認", "複式簿記", "期限内申告"]
+      },
+      "simple": {
+        "amount": 100000,
+        "label": "10万円（簡易簿記）",
+        "conditions": ["青色申告承認", "簡易簿記"]
+      }
+    },
+    "description": "青色申告者に認められる特別控除",
+    "taxSavingRate": "marginal",
+    "year": 2024,
+    "futureChange": {
+      "year": 2026,
+      "newAmount": 750000,
+      "note": "令和8年度税制改正で75万円に引き上げ予定"
+    }
+  },
+  "小規模企業共済": {
+    "id": "shoukibo_kyousai",
+    "type": "income_deduction",
+    "monthlyMin": 1000,
+    "monthlyMax": 70000,
+    "yearlyMax": 840000,
+    "unit": 500,
+    "description": "個人事業主の退職金制度。掛金全額が所得控除",
+    "benefits": {
+      "deductible": true,
+      "recoverable": true,
+      "note": "廃業・退職時に共済金として受け取り可能"
+    },
+    "eligibility": {
+      "employees_20_or_less": ["建設業", "製造業", "運輸業", "サービス業（宿泊業・娯楽業）", "不動産業", "農業"],
+      "employees_5_or_less": ["商業（卸売業・小売業）", "サービス業（宿泊業・娯楽業を除く）"]
+    },
+    "taxSavingRate": "marginal",
+    "priority": 95,
+    "officialSite": "https://www.smrj.go.jp/kyosai/skyosai/",
+    "year": 2024
+  },
+  "経営セーフティ共済": {
+    "id": "keiei_safety",
+    "type": "expense_deduction",
+    "monthlyMin": 5000,
+    "monthlyMax": 200000,
+    "yearlyMax": 2400000,
+    "totalMax": 8000000,
+    "description": "中小企業倒産防止共済。掛金全額を損金算入（必要経費）",
+    "benefits": {
+      "expenseDeductible": true,
+      "recoverable": true,
+      "note": "解約時に掛金総額の95-100%が返還"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 100,
+    "warning": {
+      "title": "2024年10月改正",
+      "content": "解約後2年以内に再加入した場合、その期間の掛金は損金算入不可",
+      "effectiveDate": "2024-10-01"
+    },
+    "eligibility": {
+      "incomeTypes": ["事業所得"],
+      "excludedTypes": ["不動産所得", "その他所得"]
+    },
+    "officialSite": "https://www.smrj.go.jp/kyosai/tkyosai/",
+    "year": 2024
+  },
+  "iDeCo": {
+    "id": "ideco",
+    "type": "income_deduction",
+    "categories": {
+      "jigyounushi": {
+        "label": "個人事業主（国民年金第1号被保険者）",
+        "monthlyMax": 68000,
+        "yearlyMax": 816000,
+        "note": "国民年金基金・国民年金付加保険料との合算上限"
+      },
+      "kaishain_db_nashi": {
+        "label": "会社員（企業年金なし）",
+        "monthlyMax": 23000,
+        "yearlyMax": 276000
+      },
+      "kaishain_db_ari": {
+        "label": "会社員（企業年金あり）",
+        "monthlyMax": 20000,
+        "yearlyMax": 240000,
+        "reform2024": "2024年12月改正で2万円に統一"
+      },
+      "koumuin": {
+        "label": "公務員",
+        "monthlyMax": 20000,
+        "yearlyMax": 240000,
+        "reform2024": "2024年12月改正で1.2万円→2万円に引き上げ"
+      }
+    },
+    "description": "個人型確定拠出年金。掛金全額が所得控除",
+    "benefits": {
+      "deductible": true,
+      "taxFreeGrowth": true,
+      "note": "運用益も非課税、60歳以降に受け取り"
+    },
+    "constraints": {
+      "withdrawalAge": 60,
+      "note": "60歳まで原則として引き出し不可"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 90,
+    "futureChange": {
+      "year": 2025,
+      "jigyounushiNewMax": 75000,
+      "note": "個人事業主の上限が月7.5万円に引き上げ予定"
+    },
+    "officialSite": "https://www.ideco-koushiki.jp/",
+    "year": 2024
+  },
+  "基礎控除": {
+    "id": "basic_deduction",
+    "type": "income_deduction",
+    "amount": 480000,
+    "description": "全ての納税者に適用される基礎控除",
+    "incomeLimit": {
+      "full": 24000000,
+      "partial": 25000000,
+      "none": 25000001
+    },
+    "taxTypes": {
+      "incomeTax": 480000,
+      "residentTax": 430000
+    },
+    "reform2025": {
+      "year": 2025,
+      "newAmount": 580000,
+      "specialMeasure": {
+        "maxAmount": 950000,
+        "note": "低所得者向けの特例措置で最大95万円まで拡大"
+      }
+    },
+    "taxSavingRate": "marginal",
+    "priority": 0,
+    "automatic": true,
+    "year": 2024
+  },
+  "生命保険料控除": {
+    "id": "life_insurance",
+    "type": "income_deduction",
+    "categories": {
+      "general": {
+        "label": "一般生命保険料",
+        "max": 40000,
+        "formula": {
+          "20000以下": "全額",
+          "20001-40000": "支払額×1/2+10000",
+          "40001-80000": "支払額×1/4+20000",
+          "80001以上": "40000"
+        }
+      },
+      "medical": {
+        "label": "介護医療保険料",
+        "max": 40000,
+        "formula": "一般生命保険料と同じ"
+      },
+      "pension": {
+        "label": "個人年金保険料",
+        "max": 40000,
+        "formula": "一般生命保険料と同じ"
+      }
+    },
+    "totalMax": 120000,
+    "description": "生命保険・医療保険・個人年金保険の保険料控除",
+    "taxSavingRate": "marginal",
+    "priority": 70,
+    "year": 2024
+  },
+  "地震保険料控除": {
+    "id": "earthquake_insurance",
+    "type": "income_deduction",
+    "max": 50000,
+    "description": "地震保険料の控除",
+    "formula": {
+      "50000以下": "全額",
+      "50001以上": "50000"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 65,
+    "year": 2024
+  },
+  "医療費控除": {
+    "id": "medical_expenses",
+    "type": "income_deduction",
+    "threshold": 100000,
+    "max": 2000000,
+    "description": "年間医療費が10万円を超えた場合に適用",
+    "formula": "（実際の医療費支出 - 保険金等）- 10万円",
+    "alternative": {
+      "name": "セルフメディケーション税制",
+      "threshold": 12000,
+      "max": 88000,
+      "description": "指定医薬品の購入が1.2万円を超えた場合（医療費控除との選択適用）"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 60,
+    "trackingNeeded": true,
+    "year": 2024
+  },
+  "ふるさと納税": {
+    "id": "furusato",
+    "type": "tax_credit",
+    "description": "ふるさと納税による税額控除",
+    "formula": "（住民税所得割額 × 20%） + 2000円",
+    "actualCost": 2000,
+    "benefits": {
+      "returnRate": 0.3,
+      "note": "寄付額の約30%相当の返礼品を受け取れる"
+    },
+    "limit": {
+      "calculation": "住民税所得割額の20%程度",
+      "note": "所得によって上限額が変動"
+    },
+    "taxSavingRate": "full",
+    "priority": 85,
+    "oneStopSpecial": {
+      "description": "ワンストップ特例制度",
+      "condition": "寄付先が5自治体以内で確定申告不要の場合に利用可能"
+    },
+    "year": 2024
+  },
+  "配偶者控除": {
+    "id": "spouse_deduction",
+    "type": "income_deduction",
+    "amounts": {
+      "regular": {
+        "incomeTax": 380000,
+        "residentTax": 330000
+      },
+      "aged70Plus": {
+        "incomeTax": 480000,
+        "residentTax": 380000,
+        "condition": "配偶者が70歳以上"
+      }
+    },
+    "spouseIncomeLimit": 480000,
+    "reform2025": {
+      "newLimit": 580000,
+      "note": "2025年分から配偶者の所得要件が58万円以下に緩和"
+    },
+    "taxpayerIncomeLimit": {
+      "full": 9000000,
+      "partial": 10000000,
+      "none": 10000001
+    },
+    "description": "配偶者がいる場合の控除",
+    "taxSavingRate": "marginal",
+    "priority": 50,
+    "note": "青色事業専従者給与と併用不可",
+    "year": 2024
+  },
+  "配偶者特別控除": {
+    "id": "spouse_special_deduction",
+    "type": "income_deduction",
+    "spouseIncomeRange": {
+      "min": 480001,
+      "max": 1330000
+    },
+    "maxAmount": {
+      "incomeTax": 380000,
+      "residentTax": 330000
+    },
+    "description": "配偶者の所得が48万円超133万円以下の場合の控除",
+    "taxpayerIncomeLimit": {
+      "full": 9000000,
+      "partial": 10000000,
+      "none": 10000001
+    },
+    "taxSavingRate": "marginal",
+    "priority": 45,
+    "year": 2024
+  },
+  "扶養控除": {
+    "id": "dependent_deduction",
+    "type": "income_deduction",
+    "categories": {
+      "general": {
+        "label": "一般扶養親族（16歳以上19歳未満、23歳以上70歳未満）",
+        "incomeTax": 380000,
+        "residentTax": 330000
+      },
+      "specific": {
+        "label": "特定扶養親族（19歳以上23歳未満）",
+        "incomeTax": 630000,
+        "residentTax": 450000
+      },
+      "aged": {
+        "label": "老人扶養親族（70歳以上・同居以外）",
+        "incomeTax": 480000,
+        "residentTax": 380000
+      },
+      "agedLivingTogether": {
+        "label": "老人扶養親族（70歳以上・同居）",
+        "incomeTax": 580000,
+        "residentTax": 450000
+      }
+    },
+    "dependentIncomeLimit": 480000,
+    "reform2025": {
+      "newLimit": 580000,
+      "note": "2025年分から扶養親族の所得要件が58万円以下に緩和"
+    },
+    "description": "扶養親族がいる場合の控除",
+    "taxSavingRate": "marginal",
+    "priority": 40,
+    "year": 2024
+  },
+  "障害者控除": {
+    "id": "disabled_deduction",
+    "type": "income_deduction",
+    "categories": {
+      "regular": {
+        "label": "障害者",
+        "incomeTax": 270000,
+        "residentTax": 260000
+      },
+      "special": {
+        "label": "特別障害者",
+        "incomeTax": 400000,
+        "residentTax": 300000
+      },
+      "specialLivingTogether": {
+        "label": "同居特別障害者",
+        "incomeTax": 750000,
+        "residentTax": 530000
+      }
+    },
+    "description": "本人または扶養親族が障害者の場合の控除",
+    "taxSavingRate": "marginal",
+    "priority": 35,
+    "year": 2024
+  },
+  "寡婦控除・ひとり親控除": {
+    "id": "single_parent_deduction",
+    "type": "income_deduction",
+    "categories": {
+      "singleParent": {
+        "label": "ひとり親控除",
+        "incomeTax": 350000,
+        "residentTax": 300000,
+        "condition": "未婚・死別・離婚で子供がいる（所得500万円以下）"
+      },
+      "widow": {
+        "label": "寡婦控除",
+        "incomeTax": 270000,
+        "residentTax": 260000,
+        "condition": "夫と死別・離婚（子供なし、所得500万円以下）"
+      }
+    },
+    "description": "ひとり親または寡婦の場合の控除",
+    "taxSavingRate": "marginal",
+    "priority": 30,
+    "year": 2024
+  },
+  "青色事業専従者給与": {
+    "id": "aoiro_senjyusha",
+    "type": "expense_deduction",
+    "description": "青色申告者が家族従業員に支払う給与を全額必要経費にできる",
+    "conditions": [
+      "青色申告承認を受けている",
+      "青色事業専従者給与届出書を提出済み",
+      "配偶者または15歳以上の親族",
+      "年間6ヶ月以上専ら事業に従事",
+      "労務の対価として相当である"
+    ],
+    "benefits": {
+      "expenseDeductible": true,
+      "unlimited": true,
+      "note": "金額に上限なし（ただし相当額であること）"
+    },
+    "recommendedAmount": {
+      "spouse": {
+        "monthly": 80000,
+        "yearly": 960000,
+        "reason": "所得税の基礎控除48万円以内に収めると配偶者の税負担ゼロ"
+      }
+    },
+    "tradeoff": {
+      "lose": "配偶者控除（38万円）",
+      "gain": "専従者給与（例：96万円）",
+      "netBenefit": "通常は専従者給与の方が有利"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 90,
+    "form": "https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm",
+    "year": 2024
+  },
+  "自宅兼事務所": {
+    "id": "home_office",
+    "type": "expense_deduction",
+    "description": "自宅を事務所として使用している場合、家賃・光熱費等を按分して経費計上",
+    "items": [
+      {
+        "name": "家賃",
+        "deductible": true,
+        "note": "使用面積比で按分"
+      },
+      {
+        "name": "水道光熱費",
+        "deductible": true,
+        "note": "使用時間・使用面積比で按分"
+      },
+      {
+        "name": "通信費（インターネット・電話）",
+        "deductible": true,
+        "note": "事業使用割合で按分"
+      },
+      {
+        "name": "火災保険料",
+        "deductible": true,
+        "note": "使用面積比で按分"
+      },
+      {
+        "name": "固定資産税",
+        "deductible": true,
+        "note": "持ち家の場合、使用面積比で按分",
+        "condition": "持ち家の場合"
+      }
+    ],
+    "recommendedRatio": {
+      "conservative": 0.3,
+      "reasonable": 0.5,
+      "note": "30-50%が一般的な按分比率"
+    },
+    "requirements": [
+      "事業での使用実態がある",
+      "合理的な計算根拠がある",
+      "使用面積の図面や写真を保管"
+    ],
+    "taxSavingRate": "marginal",
+    "priority": 80,
+    "trackingNeeded": true,
+    "year": 2024
+  },
+  "国民年金": {
+    "id": "kokumin_nenkin",
+    "type": "income_deduction",
+    "monthlyAmount": 16980,
+    "yearlyAmount": 203760,
+    "description": "国民年金保険料（全額所得控除）",
+    "benefits": {
+      "deductible": true,
+      "fullyDeductible": true
+    },
+    "prepaymentDiscount": {
+      "twoYears": 16100,
+      "oneYear": 4150,
+      "sixMonths": 1130,
+      "note": "前納による割引額（年額）"
+    },
+    "taxSavingRate": "marginal",
+    "priority": 0,
+    "automatic": true,
+    "year": 2024
+  },
+  "国民年金基金": {
+    "id": "kokumin_nenkin_kikin",
+    "type": "income_deduction",
+    "combinedMaxWithIdeco": 68000,
+    "description": "国民年金基金（全額所得控除、iDeCoと合算で月6.8万円まで）",
+    "benefits": {
+      "deductible": true,
+      "fullyDeductible": true,
+      "lifetimePension": true
+    },
+    "note": "iDeCoと合わせて月68,000円が上限",
+    "taxSavingRate": "marginal",
+    "priority": 88,
+    "year": 2024
+  },
+  "付加年金": {
+    "id": "fuka_nenkin",
+    "type": "income_deduction",
+    "monthlyAmount": 400,
+    "yearlyAmount": 4800,
+    "description": "付加年金（月400円で将来の年金が月200円×納付月数増える）",
+    "benefits": {
+      "deductible": true,
+      "roi": "2年で元が取れる超高利回り",
+      "note": "200円×納付月数が毎年受け取れる"
+    },
+    "restriction": "国民年金基金と併用不可",
+    "taxSavingRate": "marginal",
+    "priority": 92,
+    "year": 2024
+  }
+}

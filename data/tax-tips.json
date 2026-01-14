@@ -1,0 +1,577 @@
+[
+  {
+    "id": "tip_001",
+    "title": "加入経営セーフティ共済",
+    "category": "expense_deduction",
+    "priority": 100,
+    "difficulty": 2,
+    "cashflowImpact": 3,
+    "minIncome": 3000000,
+    "targetDeduction": "keiei_safety",
+    "description": "中小企業倒産防止共済に加入し、年間最大240万円を必要経費に算入",
+    "benefits": {
+      "maxYearly": 2400000,
+      "recoverable": true,
+      "recoveryRate": "95-100%（40ヶ月以上）",
+      "note": "解約時にほぼ全額返還されるため、実質的な支出は少ない"
+    },
+    "taxSavingExample": {
+      "income": 8000000,
+      "contribution": 2400000,
+      "incomeTaxSaving": 720000,
+      "residentTaxSaving": 240000,
+      "kokuhoSaving": 264000,
+      "totalSaving": 1224000,
+      "note": "所得税率30%、住民税10%、国保3.3万円/10万円で計算"
+    },
+    "steps": [
+      "中小企業基盤整備機構のウェブサイトにアクセス",
+      "委託団体または金融機関で加入申込",
+      "掛金月額を決定（5,000円〜200,000円）",
+      "口座振替の手続きを完了",
+      "確定申告時に必要経費として計上"
+    ],
+    "warnings": [
+      "2024年10月改正：解約後2年以内の再加入は経費計上不可",
+      "事業所得のみ対象（不動産所得等は対象外）",
+      "40ヶ月未満の解約は元本割れの可能性"
+    ],
+    "links": {
+      "official": "https://www.smrj.go.jp/kyosai/tkyosai/",
+      "apply": "https://kyosai-web.smrj.go.jp/customer/tkyosai/application/",
+      "calculator": "/tools/keiei-safety-calculator"
+    },
+    "affiliate": {
+      "available": true,
+      "type": "application_support",
+      "commission": 10000
+    }
+  },
+  {
+    "id": "tip_002",
+    "title": "小規模企業共済の掛金を増額",
+    "category": "income_deduction",
+    "priority": 95,
+    "difficulty": 1,
+    "cashflowImpact": 2,
+    "minIncome": 2000000,
+    "targetDeduction": "shoukibo_kyousai",
+    "description": "小規模企業共済の掛金を月額上限7万円まで増額し、年間84万円の所得控除を獲得",
+    "benefits": {
+      "maxYearly": 840000,
+      "recoverable": true,
+      "note": "廃業・退職時に共済金として受け取り可能"
+    },
+    "taxSavingExample": {
+      "income": 8000000,
+      "currentContribution": 240000,
+      "newContribution": 840000,
+      "increaseAmount": 600000,
+      "incomeTaxSaving": 180000,
+      "residentTaxSaving": 60000,
+      "kokuhoSaving": 66000,
+      "totalSaving": 306000
+    },
+    "steps": [
+      "小規模企業共済のマイページにログイン",
+      "「掛金月額変更」を選択",
+      "新しい掛金月額を入力（上限7万円）",
+      "口座の残高を確認",
+      "変更手続きを完了"
+    ],
+    "tips": [
+      "掛金は月1,000円〜70,000円の範囲で500円単位で設定可能",
+      "掛金の増額は年2回まで可能",
+      "資金繰りに応じて減額も可能（減額は制限なし）"
+    ],
+    "links": {
+      "official": "https://www.smrj.go.jp/kyosai/skyosai/",
+      "mypage": "https://kyosai-web.smrj.go.jp/customer/",
+      "change": "https://www.smrj.go.jp/kyosai/skyosai/henkou/"
+    },
+    "affiliate": {
+      "available": false
+    }
+  },
+  {
+    "id": "tip_003",
+    "title": "配偶者を青色事業専従者に",
+    "category": "expense_deduction",
+    "priority": 90,
+    "difficulty": 3,
+    "cashflowImpact": 1,
+    "minIncome": 4000000,
+    "requiresSpouse": true,
+    "requiresAoiro": true,
+    "targetDeduction": "aoiro_senjyusha",
+    "description": "配偶者を青色事業専従者として届出し、給与を支払うことで全額経費算入",
+    "benefits": {
+      "recommended": 960000,
+      "unlimited": true,
+      "note": "金額に上限なし（相当額であること）"
+    },
+    "recommendedAmount": {
+      "monthly": 80000,
+      "yearly": 960000,
+      "reason": "月8万円なら配偶者の所得税・住民税がゼロ、かつ本人の経費96万円"
+    },
+    "taxSavingExample": {
+      "income": 8000000,
+      "senjyushaKyuyo": 960000,
+      "loseSpouseDeduction": 380000,
+      "netExpense": 580000,
+      "incomeTaxSaving": 174000,
+      "residentTaxSaving": 58000,
+      "kokuhoSaving": 63800,
+      "totalSaving": 295800,
+      "note": "配偶者控除38万円を失うが、専従者給与96万円の方が有利"
+    },
+    "steps": [
+      "「青色事業専従者給与に関する届出書」を税務署に提出",
+      "提出期限：その年の3月15日まで（新規開業は2ヶ月以内）",
+      "毎月給与を支払い、給与台帳に記録",
+      "年末に源泉徴収票を作成",
+      "確定申告時に専従者給与として経費計上"
+    ],
+    "conditions": [
+      "青色申告承認を受けている",
+      "配偶者が15歳以上",
+      "年間6ヶ月以上専ら事業に従事",
+      "労務の対価として相当である",
+      "事前に届出書を提出している"
+    ],
+    "warnings": [
+      "配偶者控除（38万円）は使えなくなる",
+      "配偶者の所得が48万円を超えると配偶者自身に税金がかかる",
+      "実際に事業に従事している必要がある（形式だけはNG）",
+      "社会保険の扶養から外れる可能性（年収130万円超）"
+    },
+    "links": {
+      "form": "https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/09.htm",
+      "guide": "/guides/senjyusha-kyuuyo",
+      "calculator": "/tools/senjyusha-simulator"
+    }
+  },
+  {
+    "id": "tip_004",
+    "title": "iDeCoの掛金を増額",
+    "category": "income_deduction",
+    "priority": 88,
+    "difficulty": 1,
+    "cashflowImpact": 2,
+    "minIncome": 2500000,
+    "targetDeduction": "ideco",
+    "description": "iDeCoの掛金を月額上限6.8万円まで増額し、年間81.6万円の所得控除を獲得",
+    "benefits": {
+      "maxYearly": 816000,
+      "taxFreeGrowth": true,
+      "recoverable": true,
+      "note": "60歳以降に受け取り、運用益も非課税"
+    },
+    "taxSavingExample": {
+      "income": 8000000,
+      "currentContribution": 120000,
+      "newContribution": 816000,
+      "increaseAmount": 696000,
+      "incomeTaxSaving": 208800,
+      "residentTaxSaving": 69600,
+      "kokuhoSaving": 76560,
+      "totalSaving": 354960
+    },
+    "steps": [
+      "iDeCoの金融機関にログイン",
+      "「掛金額変更」を選択",
+      "新しい掛金月額を入力（上限6.8万円）",
+      "変更手続きを完了",
+      "翌月または翌々月から新金額で拠出開始"
+    },
+    "constraints": {
+      "withdrawalAge": 60,
+      "note": "60歳まで原則として引き出し不可"
+    },
+    "tips": [
+      "国民年金基金・付加年金と合算で月6.8万円が上限",
+      "掛金額の変更は年1回まで（12月〜11月の間）",
+      "運用商品は自由に選択・変更可能"
+    ],
+    "futureChange": {
+      "year": 2025,
+      "newMax": 75000,
+      "note": "2025年から月7.5万円に引き上げ予定"
+    },
+    "links": {
+      "official": "https://www.ideco-koushiki.jp/",
+      "comparison": "/tools/ideco-comparison",
+      "simulator": "/tools/ideco-simulator"
+    },
+    "affiliate": {
+      "available": true,
+      "type": "account_opening",
+      "partners": ["SBI証券", "楽天証券", "マネックス証券"],
+      "commission": "5000-20000"
+    }
+  },
+  {
+    "id": "tip_005",
+    "title": "ふるさと納税を活用",
+    "category": "tax_credit",
+    "priority": 85,
+    "difficulty": 1,
+    "cashflowImpact": 1,
+    "minIncome": 2000000,
+    "targetDeduction": "furusato",
+    "description": "ふるさと納税で自己負担2,000円で返礼品を獲得しながら節税",
+    "benefits": {
+      "actualCost": 2000,
+      "returnRate": 0.3,
+      "note": "寄付額の約30%相当の返礼品"
+    },
+    "calculationExample": {
+      "income": 8000000,
+      "estimatedLimit": 285000,
+      "returnValue": 85500,
+      "actualCost": 2000,
+      "netBenefit": 83500
+    },
+    "steps": [
+      "ふるさと納税サイトでシミュレーション",
+      "上限額を確認",
+      "好きな自治体・返礼品を選んで寄付",
+      "確定申告で寄付金控除を申請",
+      "または「ワンストップ特例」を利用（寄付先5自治体以内）"
+    },
+    "oneStopSpecial": {
+      "condition": "寄付先が5自治体以内で確定申告不要の場合",
+      "benefit": "確定申告不要で自動的に控除",
+      "deadline": "翌年1月10日必着"
+    },
+    "tips": [
+      "12月は駆け込み需要で人気返礼品が売り切れるため早めに",
+      "食品・日用品を選べば実質的な生活費削減に",
+      "ポイント還元のあるサイトを利用すればさらにお得"
+    },
+    "links": {
+      "calculator": "/tools/furusato-calculator",
+      "guide": "/guides/furusato-guide"
+    },
+    "affiliate": {
+      "available": true,
+      "type": "donation_site",
+      "partners": ["ふるさとチョイス", "楽天ふるさと納税", "さとふる"],
+      "commission": "3-5%"
+    }
+  },
+  {
+    "id": "tip_006",
+    "title": "自宅兼事務所の経費計上",
+    "category": "expense_deduction",
+    "priority": 80,
+    "difficulty": 2,
+    "cashflowImpact": 0,
+    "targetDeduction": "home_office",
+    "description": "自宅を事務所として使用している場合、家賃・光熱費等を按分して経費計上",
+    "items": [
+      {
+        "name": "家賃",
+        "monthly": 120000,
+        "ratio": 0.3,
+        "yearlyExpense": 432000
+      },
+      {
+        "name": "光熱費",
+        "monthly": 20000,
+        "ratio": 0.3,
+        "yearlyExpense": 72000
+      },
+      {
+        "name": "通信費",
+        "monthly": 8000,
+        "ratio": 0.8,
+        "yearlyExpense": 76800
+      },
+      {
+        "name": "火災保険料",
+        "yearly": 30000,
+        "ratio": 0.3,
+        "yearlyExpense": 9000
+      }
+    ],
+    "totalExpenseExample": 589800,
+    "taxSavingExample": {
+      "expenseIncrease": 589800,
+      "incomeTaxSaving": 176940,
+      "residentTaxSaving": 58980,
+      "kokuhoSaving": 64878,
+      "totalSaving": 300798
+    },
+    "recommendedRatio": {
+      "conservative": 0.3,
+      "reasonable": 0.5,
+      "note": "30-50%が一般的、使用実態に応じて決定"
+    },
+    "steps": [
+      "自宅の間取り図を用意し、事務所として使用している面積を測定",
+      "使用面積比率を計算",
+      "家賃・光熱費等の領収書を保管",
+      "按分比率を決定（保守的に30%程度推奨）",
+      "毎月の経費として記帳",
+      "確定申告時に経費として計上"
+    ],
+    "requirements": [
+      "実際に事業で使用している",
+      "合理的な計算根拠がある",
+      "使用面積の図面や写真を保管",
+      "継続的に同じ按分比率を使用"
+    ],
+    "warnings": [
+      "按分比率が高すぎると税務調査のリスク",
+      "使用実態のない経費計上は認められない",
+      "持ち家の場合、減価償却も考慮"
+    ],
+    "links": {
+      "calculator": "/tools/home-office-calculator",
+      "guide": "/guides/jitaku-jimusho"
+    }
+  },
+  {
+    "id": "tip_007",
+    "title": "医療費控除の活用",
+    "category": "income_deduction",
+    "priority": 60,
+    "difficulty": 1,
+    "cashflowImpact": 0,
+    "targetDeduction": "medical_expenses",
+    "description": "年間医療費が10万円を超えた場合、医療費控除で節税",
+    "threshold": 100000,
+    "maxDeduction": 2000000,
+    "taxSavingExample": {
+      "medicalExpenses": 300000,
+      "threshold": 100000,
+      "deduction": 200000,
+      "incomeTaxSaving": 60000,
+      "residentTaxSaving": 20000,
+      "totalSaving": 80000
+    },
+    "eligibleExpenses": [
+      "医師・歯科医師による診療費",
+      "治療のための医薬品購入費",
+      "病院への交通費（公共交通機関）",
+      "入院時の食事代",
+      "介護サービス費用（一部）"
+    ],
+    "ineligibleExpenses": [
+      "健康診断費用（異常なしの場合）",
+      "美容目的の治療",
+      "予防接種",
+      "ビタミン剤などの健康食品"
+    ],
+    "steps": [
+      "医療費の領収書を保管",
+      "家族全員分の医療費を合算",
+      "10万円を超える場合、確定申告で医療費控除を申請",
+      "e-Taxなら領収書提出不要（5年間保管）"
+    ],
+    "alternative": {
+      "name": "セルフメディケーション税制",
+      "threshold": 12000,
+      "max": 88000,
+      "description": "指定医薬品の購入が1.2万円を超えた場合に利用可能",
+      "note": "医療費控除との選択適用"
+    },
+    "tips": [
+      "家族全員分を合算できる",
+      "通院の交通費も対象（記録を残す）",
+      "セルフメディケーション税制との選択適用"
+    ],
+    "links": {
+      "calculator": "/tools/medical-expense-calculator",
+      "guide": "/guides/medical-deduction"
+    }
+  },
+  {
+    "id": "tip_008",
+    "title": "付加年金への加入",
+    "category": "income_deduction",
+    "priority": 92,
+    "difficulty": 1,
+    "cashflowImpact": 1,
+    "targetDeduction": "fuka_nenkin",
+    "description": "月400円の付加年金で将来の年金が「200円×納付月数」増加、2年で元が取れる超高利回り",
+    "benefits": {
+      "monthlyContribution": 400,
+      "yearlyContribution": 4800,
+      "futureIncrease": "200円×納付月数（毎年）",
+      "roi": "2年で元が取れる"
+    },
+    "example": {
+      "years": 30,
+      "totalContribution": 144000,
+      "yearlyPension": 72000,
+      "breakEvenYears": 2,
+      "note": "30年納付で年間7.2万円の年金増、2年で元が取れる"
+    },
+    "taxSavingExample": {
+      "yearlyContribution": 4800,
+      "incomeTaxSaving": 1440,
+      "residentTaxSaving": 480,
+      "kokuhoSaving": 528,
+      "totalSaving": 2448,
+      "note": "納付額4,800円に対して約2,448円の節税＋将来の年金増"
+    },
+    "steps": [
+      "市区町村の年金窓口または年金事務所に申し込み",
+      "「国民年金付加保険料納付申出書」を提出",
+      "翌月から付加保険料400円が上乗せされる",
+      "国民年金保険料と一緒に納付"
+    },
+    "restrictions": [
+      "国民年金第1号被保険者のみ",
+      "国民年金基金加入者は利用不可",
+      "iDeCoとは併用可能"
+    ],
+    "tips": [
+      "超高利回りなので必ず加入すべき",
+      "iDeCoと併用可能（合算で月6.8万円まで）",
+      "国民年金基金とは選択制"
+    ],
+    "links": {
+      "official": "https://www.nenkin.go.jp/service/kokunen/hokenryo/20150313-03.html",
+      "calculator": "/tools/fuka-nenkin-calculator"
+    }
+  },
+  {
+    "id": "tip_009",
+    "title": "生命保険料控除の最大化",
+    "category": "income_deduction",
+    "priority": 70,
+    "difficulty": 2,
+    "cashflowImpact": 2,
+    "targetDeduction": "life_insurance",
+    "description": "生命保険・医療保険・個人年金保険で最大12万円の所得控除",
+    "maxDeduction": 120000,
+    "categories": {
+      "general": {
+        "name": "一般生命保険料",
+        "max": 40000,
+        "recommendedPremium": 80000
+      },
+      "medical": {
+        "name": "介護医療保険料",
+        "max": 40000,
+        "recommendedPremium": 80000
+      },
+      "pension": {
+        "name": "個人年金保険料",
+        "max": 40000,
+        "recommendedPremium": 80000
+      }
+    },
+    "taxSavingExample": {
+      "totalDeduction": 120000,
+      "incomeTaxSaving": 36000,
+      "residentTaxSaving": 12000,
+      "kokuhoSaving": 13200,
+      "totalSaving": 61200,
+      "note": "年間保険料24万円で約6.1万円の節税"
+    },
+    "steps": [
+      "現在の保険加入状況を確認",
+      "各カテゴリーで最大控除を受けられる保険料を計算",
+      "不足分があれば追加加入を検討",
+      "年末に保険会社から送られる「保険料控除証明書」を保管",
+      "確定申告時に控除を申請"
+    },
+    "recommendations": [
+      "一般生命保険：死亡保障のある生命保険",
+      "介護医療保険：医療保険・がん保険",
+      "個人年金保険：個人年金保険（税制適格）"
+    ],
+    "warnings": [
+      "保険は節税だけでなく保障内容も重要",
+      "不要な保険に加入するのは本末転倒",
+      "控除目的だけの加入は避ける"
+    ],
+    "links": {
+      "calculator": "/tools/insurance-deduction-calculator",
+      "guide": "/guides/insurance-deduction"
+    },
+    "affiliate": {
+      "available": true,
+      "type": "insurance_consultation",
+      "commission": "初年度保険料の30-50%"
+    }
+  },
+  {
+    "id": "tip_010",
+    "title": "会計ソフトで青色申告65万円控除",
+    "category": "income_deduction",
+    "priority": 98,
+    "difficulty": 2,
+    "cashflowImpact": 1,
+    "targetDeduction": "aoiro_deduction",
+    "description": "会計ソフトを使ってe-Tax申告し、青色申告特別控除65万円を確実に獲得",
+    "benefits": {
+      "deduction65": 650000,
+      "vsWhite": 650000,
+      "vs55": 100000,
+      "note": "白色申告と比べて65万円の控除増"
+    },
+    "taxSavingExample": {
+      "deduction": 650000,
+      "incomeTaxSaving": 195000,
+      "residentTaxSaving": 65000,
+      "kokuhoSaving": 71500,
+      "totalSaving": 331500,
+      "note": "白色申告と比較して約33万円の節税"
+    },
+    "conditions": [
+      "青色申告承認申請書を提出（事前）",
+      "複式簿記で記帳",
+      "e-Tax申告または優良電子帳簿保存",
+      "貸借対照表・損益計算書を添付",
+      "期限内申告（3月15日まで）"
+    },
+    "steps": [
+      "青色申告承認申請書を税務署に提出（承認を受ける年の3月15日まで）",
+      "会計ソフト（freee、マネーフォワード、やよい等）に登録",
+      "日々の取引を記帳",
+      "年度末に決算書を作成",
+      "e-Taxで電子申告（マイナンバーカード必要）"
+    },
+    "recommendedSoftware": [
+      {
+        "name": "freee",
+        "price": "月1,628円〜",
+        "features": ["初心者向け", "自動仕訳", "e-Tax連携"],
+        "affiliate": true
+      },
+      {
+        "name": "マネーフォワード クラウド",
+        "price": "月1,408円〜",
+        "features": ["使いやすい", "銀行連携", "e-Tax連携"],
+        "affiliate": true
+      },
+      {
+        "name": "やよいの青色申告",
+        "price": "月1,125円〜",
+        "features": ["老舗", "サポート充実", "e-Tax連携"],
+        "affiliate": true
+      }
+    ],
+    "tips": [
+      "ソフト代は年間1.5〜2万円程度だが、節税効果は33万円以上",
+      "銀行・クレカ連携で記帳が自動化",
+      "e-Tax申告ならマイナンバーカード必要",
+      "初年度は税理士に相談するのも一案"
+    ],
+    "links": {
+      "comparison": "/tools/accounting-software-comparison",
+      "guide": "/guides/aoiro-申告-guide"
+    },
+    "affiliate": {
+      "available": true,
+      "type": "accounting_software",
+      "commission": "3000-5000"
+    }
+  }
+]
