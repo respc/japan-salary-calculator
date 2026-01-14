@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="個人事業主・フリーランス向け年収計算＆節税最適化ツール。控除額追跡、節税提案、手取り計算を簡単に。">
+    <meta name="keywords" content="個人事業主, フリーランス, 節税, 確定申告, 青色申告, 控除, 手取り計算">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="個人事業主節税最適化ツール - 日本年収計算機">
+    <meta property="og:description" content="個人事業主・フリーランス向けの節税最適化ツール。控除額を追跡し、最適な節税方法を提案します。">
+
+    <title>個人事業主節税最適化ツール - 日本年収計算機</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💼 個人事業主 節税最適化ツール</h1>
+            <p>事業所得から手取り計算・控除額追跡・節税提案まで</p>
+        </header>
+
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <h3 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">計算モードを選択してください</h3>
+            <div class="mode-options">
+                <a href="index.html" class="mode-card">
+                    <div class="mode-icon">👔</div>
+                    <h4>会社員モード</h4>
+                    <p>給与所得者向け</p>
+                    <ul class="mode-features">
+                        <li>✓ 給与・賞与計算</li>
+                        <li>✓ 社会保険料</li>
+                        <li>✓ 源泉徴収</li>
+                    </ul>
+                </a>
+                <a href="jigyounushi.html" class="mode-card active">
+                    <div class="mode-icon">💼</div>
+                    <h4>個人事業主モード</h4>
+                    <p>フリーランス・自営業者向け</p>
+                    <ul class="mode-features">
+                        <li>✓ 事業所得計算</li>
+                        <li>✓ 控除額追跡</li>
+                        <li>✓ 節税提案 🔥</li>
+                    </ul>
+                    <span class="mode-badge">NEW</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Calculator Form -->
+        <div class="calculator">
+            <form id="jigyounushiForm">
+                <!-- 基本情報 -->
+                <div class="section">
+                    <h3>📋 基本情報</h3>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="businessRevenue">事業収入（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="businessRevenue" placeholder="800" required>
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem; margin-top: 4px;">売上・報酬の合計金額</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="age">年齢</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="number" id="age" placeholder="35" required min="18" max="100">
+                                <span class="unit">歳</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="prefecture">都道府県</label>
+                            <select id="prefecture">
+                                <option value="tokyo">東京都</option>
+                                <option value="hokkaido">北海道</option>
+                                <option value="aomori">青森県</option>
+                                <option value="iwate">岩手県</option>
+                                <option value="miyagi">宮城県</option>
+                                <option value="akita">秋田県</option>
+                                <option value="yamagata">山形県</option>
+                                <option value="fukushima">福島県</option>
+                                <option value="ibaraki">茨城県</option>
+                                <option value="tochigi">栃木県</option>
+                                <option value="gunma">群馬県</option>
+                                <option value="saitama">埼玉県</option>
+                                <option value="chiba">千葉県</option>
+                                <option value="kanagawa">神奈川県</option>
+                                <option value="niigata">新潟県</option>
+                                <option value="toyama">富山県</option>
+                                <option value="ishikawa">石川県</option>
+                                <option value="fukui">福井県</option>
+                                <option value="yamanashi">山梨県</option>
+                                <option value="nagano">長野県</option>
+                                <option value="gifu">岐阜県</option>
+                                <option value="shizuoka">静岡県</option>
+                                <option value="aichi">愛知県</option>
+                                <option value="mie">三重県</option>
+                                <option value="shiga">滋賀県</option>
+                                <option value="kyoto">京都府</option>
+                                <option value="osaka">大阪府</option>
+                                <option value="hyogo">兵庫県</option>
+                                <option value="nara">奈良県</option>
+                                <option value="wakayama">和歌山県</option>
+                                <option value="tottori">鳥取県</option>
+                                <option value="shimane">島根県</option>
+                                <option value="okayama">岡山県</option>
+                                <option value="hiroshima">広島県</option>
+                                <option value="yamaguchi">山口県</option>
+                                <option value="tokushima">徳島県</option>
+                                <option value="kagawa">香川県</option>
+                                <option value="ehime">愛媛県</option>
+                                <option value="kochi">高知県</option>
+                                <option value="fukuoka">福岡県</option>
+                                <option value="saga">佐賀県</option>
+                                <option value="nagasaki">長崎県</option>
+                                <option value="kumamoto">熊本県</option>
+                                <option value="oita">大分県</option>
+                                <option value="miyazaki">宮崎県</option>
+                                <option value="kagoshima">鹿児島県</option>
+                                <option value="okinawa">沖縄県</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="filingType">申告種類</label>
+                            <select id="filingType">
+                                <option value="aoiro">青色申告</option>
+                                <option value="white">白色申告</option>
+                            </select>
+                            <small style="color: #666; font-size: 0.85rem; margin-top: 4px;">青色申告は最大65万円の控除が可能</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 経費情報 -->
+                <div class="section">
+                    <h3>💰 経費情報</h3>
+
+                    <div class="input-row">
+                        <div class="input-group" style="grid-column: 1 / -1;">
+                            <label>
+                                <input type="radio" name="expenseMode" value="simple" checked>
+                                簡易入力（経費合計のみ）
+                            </label>
+                            <label style="margin-left: 20px;">
+                                <input type="radio" name="expenseMode" value="detailed">
+                                詳細入力（項目別に入力）
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="simpleExpenseInput">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="totalExpense">経費合計（年額）</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="totalExpense" placeholder="200">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="detailedExpenseInput" style="display: none;">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="exp_purchase">仕入費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_purchase" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="exp_rent">家賃・地代</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_rent" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="exp_utilities">水道光熱費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_utilities" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="exp_communication">通信費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_communication" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="exp_transportation">旅費交通費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_transportation" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="exp_entertainment">交際費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_entertainment" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="exp_supplies">消耗品費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_supplies" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="exp_other">その他経費</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="exp_other" placeholder="0" class="expense-item">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 控除情報 -->
+                <div class="section">
+                    <h3>🎯 控除情報（使用中の控除を入力）</h3>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="aoiroDeduction">青色申告特別控除</label>
+                            <select id="aoiroDeduction">
+                                <option value="0">なし</option>
+                                <option value="100000">10万円（簡易簿記）</option>
+                                <option value="550000">55万円（複式簿記・紙申告）</option>
+                                <option value="650000" selected>65万円（e-Tax申告）</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="shoukiboKyousai">小規模企業共済（月額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="shoukiboKyousai" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">上限: 7万円/月（84万円/年）</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="keieiSafety">経営セーフティ共済（月額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="keieiSafety" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">上限: 20万円/月（240万円/年）</small>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="ideco">iDeCo（月額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="ideco" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">上限: 6.8万円/月（81.6万円/年）</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="furusato">ふるさと納税（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="furusato" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">実質負担2,000円で返礼品ゲット</small>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="lifeInsurance">生命保険料（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="lifeInsurance" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">控除上限: 12万円/年</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="earthquakeInsurance">地震保険料（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="earthquakeInsurance" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">控除上限: 5万円/年</small>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="medicalExpense">医療費（年額）</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="medicalExpense" placeholder="0">
+                                <span class="unit">万円</span>
+                            </div>
+                            <small style="color: #666; font-size: 0.85rem;">10万円超で控除対象</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 家族構成 -->
+                <div class="section">
+                    <h3>👨‍👩‍👧 家族構成</h3>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="hasSpouse">
+                                <input type="checkbox" id="hasSpouse"> 配偶者あり
+                            </label>
+                            <div id="spouseIncome" style="display: none; margin-top: 10px;">
+                                <label for="spouseIncomeAmount">配偶者の所得（年額）</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="spouseIncomeAmount" placeholder="0">
+                                    <span class="unit">万円</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="dependents">扶養親族の人数</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="number" id="dependents" placeholder="0" min="0" max="10" value="0">
+                                <span class="unit">人</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="aoiroSenjyusha">
+                                <input type="checkbox" id="aoiroSenjyusha"> 青色事業専従者給与あり
+                            </label>
+                            <div id="senjyushaAmount" style="display: none; margin-top: 10px;">
+                                <label for="senjyushaMonthly">専従者給与（月額）</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="text" id="senjyushaMonthly" placeholder="8">
+                                    <span class="unit">万円</span>
+                                </div>
+                                <small style="color: #f39c12; font-size: 0.85rem;">※専従者給与を使うと配偶者控除は使えません</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 計算ボタン -->
+                <button type="submit" class="calculate-btn">
+                    💰 手取り計算 & 節税提案を見る
+                </button>
+            </form>
+        </div>
+
+        <!-- 結果表示エリア -->
+        <div id="results" class="results hidden">
+            <!-- 手取り計算結果 -->
+            <div class="result-card">
+                <h3>💰 計算結果</h3>
+                <div class="result-summary">
+                    <div class="result-item">
+                        <span class="label">事業収入</span>
+                        <span class="value" id="result_revenue">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">経費</span>
+                        <span class="value" id="result_expense">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">青色申告特別控除</span>
+                        <span class="value" id="result_aoiro">-</span>
+                    </div>
+                    <div class="result-item highlight">
+                        <span class="label">事業所得</span>
+                        <span class="value" id="result_business_income">-</span>
+                    </div>
+                </div>
+
+                <div class="result-summary" style="margin-top: 20px;">
+                    <div class="result-item">
+                        <span class="label">所得税</span>
+                        <span class="value" id="result_income_tax">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">住民税</span>
+                        <span class="value" id="result_resident_tax">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">国民健康保険</span>
+                        <span class="value" id="result_kokuho">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">国民年金</span>
+                        <span class="value" id="result_nenkin">-</span>
+                    </div>
+                    <div class="result-item highlight success">
+                        <span class="label">手取り</span>
+                        <span class="value" id="result_net_income">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 節税チャンス -->
+            <div class="result-card" id="taxSavingCard">
+                <h3>🎯 節税チャンス発見！</h3>
+                <div class="tax-saving-summary">
+                    <p>あなたはまだ <span class="highlight-amount" id="totalSavingPotential">-</span> 円節税できます！</p>
+                </div>
+                <div id="taxTipsContainer">
+                    <!-- 節税提案がここに動的に追加される -->
+                </div>
+            </div>
+
+            <!-- 控除使用状況 -->
+            <div class="result-card">
+                <h3>📊 控除額使用状況</h3>
+                <div id="deductionTrackerContainer">
+                    <!-- 控除追跡がここに動的に追加される -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="jigyounushi.js"></script>
+</body>
+</html>

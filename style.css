@@ -1259,3 +1259,151 @@ select:focus {
         overflow: visible !important;
     }
 }
+/* ===================================
+   Mode Selector Styles
+   =================================== */
+.mode-selector {
+    margin: 30px auto;
+    max-width: 900px;
+    padding: 20px;
+}
+
+.mode-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.mode-card {
+    position: relative;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 30px 25px;
+    text-align: center;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+.mode-card.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.mode-icon {
+    font-size: 64px;
+    margin-bottom: 15px;
+    display: inline-block;
+    animation: bounce 2s infinite;
+}
+
+.mode-card.active .mode-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.mode-card h4 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    font-weight: 700;
+}
+
+.mode-card p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin: 5px 0 15px 0;
+}
+
+.mode-features {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0 0 0;
+    text-align: left;
+}
+
+.mode-features li {
+    padding: 8px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mode-card.active .mode-features li {
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.mode-features li:last-child {
+    border-bottom: none;
+}
+
+.mode-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(245, 87, 108, 0.3);
+    animation: glow 2s infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 2px 10px rgba(245, 87, 108, 0.3);
+    }
+    50% {
+        box-shadow: 0 2px 20px rgba(245, 87, 108, 0.6);
+    }
+}
+
+/* Responsive Design for Mode Selector */
+@media (max-width: 768px) {
+    .mode-options {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .mode-card {
+        padding: 25px 20px;
+    }
+    
+    .mode-icon {
+        font-size: 48px;
+    }
+    
+    .mode-card h4 {
+        font-size: 1.3rem;
+    }
+}
