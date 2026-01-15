@@ -1876,3 +1876,141 @@ select:focus {
         text-align: center;
     }
 }
+
+/* ===================================
+   Radio Button Styles for Expense Mode
+   =================================== */
+.input-group label[for] {
+    cursor: pointer;
+}
+
+.input-group input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.input-group label:has(input[type="radio"]) {
+    display: inline-block;
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input-group label:has(input[type="radio"]:checked) {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%);
+    font-weight: 600;
+}
+
+.input-group label:has(input[type="radio"]):hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+/* Checkbox Styles */
+.input-group input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.input-group label:has(input[type="checkbox"]) {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.input-group label:has(input[type="checkbox"]):hover {
+    background: #f0f0f0;
+}
+
+.input-group label:has(input[type="checkbox"]:checked) {
+    background: #e8f5e9;
+    font-weight: 600;
+}
+
+/* ===================================
+   Radio Button Styles for Expense Mode (Compatible)
+   =================================== */
+
+/* Make radio labels more clickable */
+.expense-mode-selector {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.expense-mode-option {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    font-size: 1rem;
+}
+
+.expense-mode-option:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+}
+
+.expense-mode-option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.expense-mode-option input[type="radio"]:checked {
+    accent-color: #667eea;
+}
+
+.expense-mode-option.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%);
+    font-weight: 600;
+}
+
+/* Checkbox Styles */
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label:hover {
+    background: #f0f0f0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+    accent-color: #667eea;
+}
+
+.checkbox-label.checked {
+    background: #e8f5e9;
+    font-weight: 600;
+}

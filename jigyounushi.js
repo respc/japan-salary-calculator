@@ -12,6 +12,10 @@ class JigyounushiCalculator {
     }
 
     async init() {
+        // Initialize event listeners immediately (don't wait for data)
+        this.initializeEventListeners();
+        this.initializeUI();
+
         try {
             // Load deduction limits and tax tips data
             const [deductionRes, tipsRes] = await Promise.all([
@@ -22,8 +26,7 @@ class JigyounushiCalculator {
             this.deductionLimits = await deductionRes.json();
             this.taxTips = await tipsRes.json();
 
-            this.initializeEventListeners();
-            this.initializeUI();
+            console.log('データ読み込み完了');
         } catch (error) {
             console.error('初期化エラー:', error);
             alert('データの読み込みに失敗しました。ページを再読み込みしてください。');
@@ -78,15 +81,36 @@ class JigyounushiCalculator {
     }
 
     toggleExpenseMode(mode) {
+        console.log('Toggling expense mode to:', mode);
+
         const simpleInput = document.getElementById('simpleExpenseInput');
         const detailedInput = document.getElementById('detailedExpenseInput');
+        const simpleModeLabel = document.getElementById('simpleModeLabel');
+        const detailedModeLabel = document.getElementById('detailedModeLabel');
+
+        if (!simpleInput || !detailedInput) {
+            console.error('Expense input elements not found!');
+            return;
+        }
 
         if (mode === 'simple') {
             simpleInput.style.display = 'block';
             detailedInput.style.display = 'none';
+
+            // Update visual feedback
+            if (simpleModeLabel) simpleModeLabel.classList.add('selected');
+            if (detailedModeLabel) detailedModeLabel.classList.remove('selected');
+
+            console.log('Switched to simple mode');
         } else {
             simpleInput.style.display = 'none';
             detailedInput.style.display = 'block';
+
+            // Update visual feedback
+            if (simpleModeLabel) simpleModeLabel.classList.remove('selected');
+            if (detailedModeLabel) detailedModeLabel.classList.add('selected');
+
+            console.log('Switched to detailed mode');
         }
     }
 
