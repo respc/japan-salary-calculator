@@ -7,6 +7,7 @@ class JigyounushiCalculator {
     constructor() {
         this.deductionLimits = null;
         this.taxTips = null;
+        this.dataLoaded = false;
         this.prefectureData = this.getPrefectureData();
         this.init();
     }
@@ -23,13 +24,24 @@ class JigyounushiCalculator {
                 fetch('data/tax-tips.json')
             ]);
 
+            // Check if responses are OK
+            if (!deductionRes.ok) {
+                throw new Error(`deduction-limits.json: ${deductionRes.status} ${deductionRes.statusText}`);
+            }
+            if (!tipsRes.ok) {
+                throw new Error(`tax-tips.json: ${tipsRes.status} ${tipsRes.statusText}`);
+            }
+
             this.deductionLimits = await deductionRes.json();
             this.taxTips = await tipsRes.json();
+            this.dataLoaded = true;
 
             console.log('データ読み込み完了');
         } catch (error) {
             console.error('初期化エラー:', error);
-            alert('データの読み込みに失敗しました。ページを再読み込みしてください。');
+            this.dataLoaded = false;
+            // Don't show alert - let the UI handle gracefully
+            console.warn('データの読み込みに失敗しました。一部の機能が制限されます。');
         }
     }
 
@@ -316,7 +328,7 @@ class JigyounushiCalculator {
 
     calculateSocialInsurance(businessIncome, age, prefecture) {
         // National Health Insurance (国民健康保険)
-        const prefData = this.prefectureData[prefecture];
+        const prefData = this.prefectureData[prefecture] || this.prefectureData['default'];
         const kokuhoIncome = Math.max(0, businessIncome - 430000); // 基礎控除後
         const kokuho = Math.round(kokuhoIncome * prefData.kokuhoRate + 45000); // 地域別料率 + 均等割
 
@@ -358,7 +370,7 @@ class JigyounushiCalculator {
 
     calculateResidentTax(taxableIncome, prefecture) {
         // 住民税 = 所得割 (10%) + 均等割 (5,000円程度)
-        const prefData = this.prefectureData[prefecture];
+        const prefData = this.prefectureData[prefecture] || this.prefectureData['default'];
         const shotokuWari = taxableIncome * 0.10;
         const kintouWari = prefData.residentTaxFlat || 5000;
         return Math.round(shotokuWari + kintouWari);
@@ -381,17 +393,30 @@ class JigyounushiCalculator {
         this.safeUpdateElement('result_nenkin', this.formatCurrency(results.nenkin));
         this.safeUpdateElement('result_net_income', this.formatCurrency(results.netIncome));
 
-        // Initialize and display deduction tracker
-        if (window.DeductionTracker) {
+        // Initialize and display deduction tracker (only if data loaded)
+        if (window.DeductionTracker && this.deductionLimits) {
             const tracker = new DeductionTracker(this.deductionLimits);
             tracker.displayDeductionStatus(results.deductions, formData);
+        } else {
+            // Show fallback message when data not available
+            const container = document.getElementById('deductionTrackerContainer');
+            if (container) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">控除データを読み込めませんでした。ページを再読み込みしてください。</p>';
+            }
         }
 
-        // Initialize and display tax optimizer
-        if (window.TaxOptimizer) {
+        // Initialize and display tax optimizer (only if data loaded)
+        if (window.TaxOptimizer && this.taxTips && this.deductionLimits) {
             const optimizer = new TaxOptimizer(this.taxTips, this.deductionLimits);
             const tips = optimizer.generateTaxSavingTips(results, formData);
             optimizer.displayTaxSavingTips(tips);
+        } else {
+            // Show fallback message when data not available
+            const container = document.getElementById('taxTipsContainer');
+            if (container) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">節税提案データを読み込めませんでした。ページを再読み込みしてください。</p>';
+            }
+            this.safeUpdateElement('totalSavingPotential', '---');
         }
 
         // Scroll to results

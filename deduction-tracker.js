@@ -5,7 +5,7 @@
 
 class DeductionTracker {
     constructor(deductionLimits) {
-        this.deductionLimits = deductionLimits;
+        this.deductionLimits = deductionLimits || {};
         this.trackableDeductions = [
             'aoiroDeduction',
             'shoukiboKyousai',
@@ -24,6 +24,12 @@ class DeductionTracker {
         const container = document.getElementById('deductionTrackerContainer');
         if (!container) return;
 
+        // Check if deductionLimits is available
+        if (!this.deductionLimits || Object.keys(this.deductionLimits).length === 0) {
+            container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">控除データを読み込み中です...</p>';
+            return;
+        }
+
         container.innerHTML = '';
 
         // Track each deduction
@@ -39,9 +45,17 @@ class DeductionTracker {
     getDeductionInfo(key, deductions, formData) {
         let info = null;
 
+        // Default limits as fallback
+        const defaultLimits = {
+            shoukiboYearlyMax: 840000,
+            keieiYearlyMax: 2400000,
+            idecoYearlyMax: 816000,
+            lifeInsuranceMax: 120000,
+            earthquakeMax: 50000
+        };
+
         switch (key) {
             case 'aoiroDeduction':
-                const aoiroData = this.deductionLimits['青色申告特別控除'];
                 let maxAoiro = 0;
                 let recommendedLabel = '';
 
@@ -66,32 +80,34 @@ class DeductionTracker {
 
             case 'shoukiboKyousai':
                 const shoukiboData = this.deductionLimits['小規模企業共済'];
+                const shoukiboYearlyMax = shoukiboData?.yearlyMax || defaultLimits.shoukiboYearlyMax;
                 info = {
                     name: '小規模企業共済',
                     used: deductions.shoukiboKyousai,
-                    limit: shoukiboData.yearlyMax,
-                    remaining: shoukiboData.yearlyMax - deductions.shoukiboKyousai,
+                    limit: shoukiboYearlyMax,
+                    remaining: shoukiboYearlyMax - deductions.shoukiboKyousai,
                     unit: '円',
-                    status: this.getUsageStatus(deductions.shoukiboKyousai, shoukiboData.yearlyMax),
-                    recommendation: deductions.shoukiboKyousai < shoukiboData.yearlyMax ?
-                        `まだ${this.formatShortCurrency(shoukiboData.yearlyMax - deductions.shoukiboKyousai)}の枠があります` :
+                    status: this.getUsageStatus(deductions.shoukiboKyousai, shoukiboYearlyMax),
+                    recommendation: deductions.shoukiboKyousai < shoukiboYearlyMax ?
+                        `まだ${this.formatShortCurrency(shoukiboYearlyMax - deductions.shoukiboKyousai)}の枠があります` :
                         '最大限活用中！'
                 };
                 break;
 
             case 'keieiSafety':
                 const keieiData = this.deductionLimits['経営セーフティ共済'];
+                const keieiYearlyMax = keieiData?.yearlyMax || defaultLimits.keieiYearlyMax;
                 info = {
                     name: '経営セーフティ共済',
                     used: deductions.keieiSafety,
-                    limit: keieiData.yearlyMax,
-                    remaining: keieiData.yearlyMax - deductions.keieiSafety,
+                    limit: keieiYearlyMax,
+                    remaining: keieiYearlyMax - deductions.keieiSafety,
                     unit: '円',
-                    status: this.getUsageStatus(deductions.keieiSafety, keieiData.yearlyMax),
+                    status: this.getUsageStatus(deductions.keieiSafety, keieiYearlyMax),
                     recommendation: deductions.keieiSafety === 0 ?
-                        '🚨 未利用！大きな節税チャンス！' :
-                        deductions.keieiSafety < keieiData.yearlyMax ?
-                            `まだ${this.formatShortCurrency(keieiData.yearlyMax - deductions.keieiSafety)}の枠があります` :
+                        '未利用！大きな節税チャンス！' :
+                        deductions.keieiSafety < keieiYearlyMax ?
+                            `まだ${this.formatShortCurrency(keieiYearlyMax - deductions.keieiSafety)}の枠があります` :
                             '最大限活用中！',
                     highlight: deductions.keieiSafety === 0
                 };
@@ -99,7 +115,7 @@ class DeductionTracker {
 
             case 'ideco':
                 const idecoData = this.deductionLimits['iDeCo'];
-                const idecoLimit = idecoData.categories.jigyounushi.yearlyMax;
+                const idecoLimit = idecoData?.categories?.jigyounushi?.yearlyMax || defaultLimits.idecoYearlyMax;
                 info = {
                     name: 'iDeCo（個人型確定拠出年金）',
                     used: deductions.ideco,
@@ -115,16 +131,17 @@ class DeductionTracker {
 
             case 'lifeInsurance':
                 const lifeData = this.deductionLimits['生命保険料控除'];
+                const lifeMax = lifeData?.totalMax || defaultLimits.lifeInsuranceMax;
                 info = {
                     name: '生命保険料控除',
                     used: deductions.lifeInsurance,
-                    limit: lifeData.totalMax,
-                    remaining: lifeData.totalMax - Math.min(deductions.lifeInsurance, lifeData.totalMax),
+                    limit: lifeMax,
+                    remaining: lifeMax - Math.min(deductions.lifeInsurance, lifeMax),
                     unit: '円',
-                    status: this.getUsageStatus(Math.min(deductions.lifeInsurance, lifeData.totalMax), lifeData.totalMax),
+                    status: this.getUsageStatus(Math.min(deductions.lifeInsurance, lifeMax), lifeMax),
                     recommendation: deductions.lifeInsurance < 80000 ?
                         '控除を最大化するには年24万円の保険料が必要' :
-                        deductions.lifeInsurance >= lifeData.totalMax ?
+                        deductions.lifeInsurance >= lifeMax ?
                             '最大限活用中！' :
                             '控除上限に近づいています'
                 };
@@ -132,15 +149,16 @@ class DeductionTracker {
 
             case 'earthquakeInsurance':
                 const earthquakeData = this.deductionLimits['地震保険料控除'];
+                const earthquakeMax = earthquakeData?.max || defaultLimits.earthquakeMax;
                 info = {
                     name: '地震保険料控除',
-                    used: Math.min(deductions.earthquakeInsurance, earthquakeData.max),
-                    limit: earthquakeData.max,
-                    remaining: earthquakeData.max - Math.min(deductions.earthquakeInsurance, earthquakeData.max),
+                    used: Math.min(deductions.earthquakeInsurance, earthquakeMax),
+                    limit: earthquakeMax,
+                    remaining: earthquakeMax - Math.min(deductions.earthquakeInsurance, earthquakeMax),
                     unit: '円',
-                    status: this.getUsageStatus(Math.min(deductions.earthquakeInsurance, earthquakeData.max), earthquakeData.max),
-                    recommendation: deductions.earthquakeInsurance < earthquakeData.max ?
-                        `まだ${this.formatShortCurrency(earthquakeData.max - Math.min(deductions.earthquakeInsurance, earthquakeData.max))}の枠があります` :
+                    status: this.getUsageStatus(Math.min(deductions.earthquakeInsurance, earthquakeMax), earthquakeMax),
+                    recommendation: deductions.earthquakeInsurance < earthquakeMax ?
+                        `まだ${this.formatShortCurrency(earthquakeMax - Math.min(deductions.earthquakeInsurance, earthquakeMax))}の枠があります` :
                         '最大限活用中！'
                 };
                 break;
