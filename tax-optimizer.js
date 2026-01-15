@@ -5,8 +5,8 @@
 
 class TaxOptimizer {
     constructor(taxTips, deductionLimits) {
-        this.taxTips = taxTips;
-        this.deductionLimits = deductionLimits;
+        this.taxTips = taxTips || [];
+        this.deductionLimits = deductionLimits || {};
     }
 
     /**
@@ -14,6 +14,12 @@ class TaxOptimizer {
      */
     generateTaxSavingTips(results, formData) {
         const tips = [];
+
+        // Return empty tips if no data available
+        if (!this.taxTips || !Array.isArray(this.taxTips) || this.taxTips.length === 0) {
+            return tips;
+        }
+
         const marginalTaxRate = this.calculateMarginalTaxRate(results.taxableIncome);
 
         this.taxTips.forEach(tip => {
@@ -214,9 +220,22 @@ class TaxOptimizer {
 
         container.innerHTML = '';
 
+        // Handle empty tips case
+        if (!tips || tips.length === 0) {
+            container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">現在の設定に基づく追加の節税提案はありません。</p>';
+            const totalElement = document.getElementById('totalSavingPotential');
+            if (totalElement) {
+                totalElement.textContent = this.formatCurrency(0);
+            }
+            return;
+        }
+
         // Calculate total potential savings
-        const totalPotential = tips.reduce((sum, tip) => sum + tip.potentialSaving.total, 0);
-        document.getElementById('totalSavingPotential').textContent = this.formatCurrency(totalPotential);
+        const totalPotential = tips.reduce((sum, tip) => sum + (tip.potentialSaving?.total || 0), 0);
+        const totalElement = document.getElementById('totalSavingPotential');
+        if (totalElement) {
+            totalElement.textContent = this.formatCurrency(totalPotential);
+        }
 
         // Show top 3 tips for free version (in production, show all for premium)
         const displayTips = tips.slice(0, 3);
@@ -237,33 +256,35 @@ class TaxOptimizer {
         const card = document.createElement('div');
         card.className = 'tax-tip-card';
 
-        const priorityLabel = this.getPriorityLabel(tip.priority);
-        const difficultyStars = '⭐'.repeat(Math.max(1, 4 - tip.difficulty));
+        const priorityLabel = this.getPriorityLabel(tip.priority || 50);
+        const difficulty = tip.difficulty || 2;
+        const difficultyStars = '⭐'.repeat(Math.max(1, 4 - difficulty));
+        const potentialSaving = tip.potentialSaving || { total: 0, incomeTaxSaving: 0, residentTaxSaving: 0, kokuhoSaving: 0 };
 
         card.innerHTML = `
             <div class="tip-header">
-                <div class="tip-rank">#{${rank}}</div>
+                <div class="tip-rank">#${rank}</div>
                 <div class="tip-priority ${priorityLabel.class}">${priorityLabel.text}</div>
             </div>
 
-            <h4 class="tip-title">✨ ${tip.title}</h4>
-            <p class="tip-description">${tip.description}</p>
+            <h4 class="tip-title">✨ ${tip.title || '節税提案'}</h4>
+            <p class="tip-description">${tip.description || ''}</p>
 
             <div class="tip-savings">
                 <div class="savings-total">
                     <span class="label">💰 予想節税効果:</span>
-                    <span class="value">${this.formatCurrency(tip.potentialSaving.total)}/年</span>
+                    <span class="value">${this.formatCurrency(potentialSaving.total)}/年</span>
                 </div>
                 <div class="savings-breakdown">
-                    <span>所得税: ${this.formatShortCurrency(tip.potentialSaving.incomeTaxSaving)}</span>
-                    <span>住民税: ${this.formatShortCurrency(tip.potentialSaving.residentTaxSaving)}</span>
-                    <span>国保: ${this.formatShortCurrency(tip.potentialSaving.kokuhoSaving)}</span>
+                    <span>所得税: ${this.formatShortCurrency(potentialSaving.incomeTaxSaving)}</span>
+                    <span>住民税: ${this.formatShortCurrency(potentialSaving.residentTaxSaving)}</span>
+                    <span>国保: ${this.formatShortCurrency(potentialSaving.kokuhoSaving)}</span>
                 </div>
             </div>
 
             <div class="tip-meta">
                 <span class="difficulty">実施難易度: ${difficultyStars}</span>
-                <span class="cashflow">現金流影響: ${this.getCashflowLabel(tip.cashflowImpact)}</span>
+                <span class="cashflow">現金流影響: ${this.getCashflowLabel(tip.cashflowImpact || 0)}</span>
             </div>
 
             ${tip.steps && tip.steps.length > 0 ? `
