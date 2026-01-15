@@ -150,10 +150,13 @@ class JigyounushiCalculator {
         numberInputs.forEach(inputId => {
             const input = document.getElementById(inputId);
             if (input) {
+                // Just format the display with commas on blur, keep in 万円 units
                 input.addEventListener('blur', (e) => {
-                    const value = this.parseManEnNumber(e.target.value);
-                    if (value > 0) {
-                        e.target.value = value.toFixed(0);
+                    const value = e.target.value.replace(/[,，]/g, '');
+                    const num = parseFloat(value);
+                    if (!isNaN(num) && num > 0) {
+                        // Format with commas for readability, but keep in 万円 units
+                        e.target.value = num.toLocaleString('ja-JP');
                     }
                 });
             }
