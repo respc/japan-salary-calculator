@@ -147,14 +147,16 @@
 
                     <div class="input-row">
                         <div class="input-group" style="grid-column: 1 / -1;">
-                            <label>
-                                <input type="radio" name="expenseMode" value="simple" checked>
-                                簡易入力（経費合計のみ）
-                            </label>
-                            <label style="margin-left: 20px;">
-                                <input type="radio" name="expenseMode" value="detailed">
-                                詳細入力（項目別に入力）
-                            </label>
+                            <div class="expense-mode-selector">
+                                <label class="expense-mode-option selected" id="simpleModeLabel">
+                                    <input type="radio" name="expenseMode" value="simple" checked>
+                                    簡易入力（経費合計のみ）
+                                </label>
+                                <label class="expense-mode-option" id="detailedModeLabel">
+                                    <input type="radio" name="expenseMode" value="detailed">
+                                    詳細入力（項目別に入力）
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -450,6 +452,8 @@
 
     </div>
 
+    <script src="deduction-tracker.js"></script>
+    <script src="tax-optimizer.js"></script>
     <script src="jigyounushi.js"></script>
 </body>
 </html>
