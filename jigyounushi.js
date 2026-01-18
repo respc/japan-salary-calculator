@@ -458,6 +458,130 @@ class JigyounushiCalculator {
             default: { kokuhoRate: 0.10, residentTaxFlat: 5000, healthInsuranceRate: 0.10, careInsuranceRate: 0.0182 }
         };
     }
+
+    // Save form data to localStorage
+    saveFormData() {
+        const formData = {
+            businessRevenue: document.getElementById('businessRevenue')?.value || '',
+            age: document.getElementById('age')?.value || '',
+            prefecture: document.getElementById('prefecture')?.value || 'tokyo',
+            filingType: document.getElementById('filingType')?.value || 'aoiro',
+            totalExpense: document.getElementById('totalExpense')?.value || '',
+            aoiroDeduction: document.getElementById('aoiroDeduction')?.value || '650000',
+            shoukiboKyousai: document.getElementById('shoukiboKyousai')?.value || '',
+            keieiSafety: document.getElementById('keieiSafety')?.value || '',
+            ideco: document.getElementById('ideco')?.value || '',
+            furusato: document.getElementById('furusato')?.value || '',
+            lifeInsurance: document.getElementById('lifeInsurance')?.value || '',
+            earthquakeInsurance: document.getElementById('earthquakeInsurance')?.value || '',
+            medicalExpense: document.getElementById('medicalExpense')?.value || '',
+            hasSpouse: document.getElementById('hasSpouse')?.checked || false,
+            dependents: document.getElementById('dependents')?.value || '0',
+            savedAt: new Date().toISOString()
+        };
+
+        try {
+            localStorage.setItem('jigyounushi_form_data', JSON.stringify(formData));
+            this.showSaveNotification('保存しました');
+            return true;
+        } catch (error) {
+            console.error('保存エラー:', error);
+            this.showSaveNotification('保存に失敗しました', true);
+            return false;
+        }
+    }
+
+    // Load form data from localStorage
+    loadFormData() {
+        try {
+            const savedData = localStorage.getItem('jigyounushi_form_data');
+            if (!savedData) {
+                this.showSaveNotification('保存されたデータがありません', true);
+                return false;
+            }
+
+            const formData = JSON.parse(savedData);
+
+            // Restore form values
+            if (document.getElementById('businessRevenue')) document.getElementById('businessRevenue').value = formData.businessRevenue || '';
+            if (document.getElementById('age')) document.getElementById('age').value = formData.age || '';
+            if (document.getElementById('prefecture')) document.getElementById('prefecture').value = formData.prefecture || 'tokyo';
+            if (document.getElementById('filingType')) document.getElementById('filingType').value = formData.filingType || 'aoiro';
+            if (document.getElementById('totalExpense')) document.getElementById('totalExpense').value = formData.totalExpense || '';
+            if (document.getElementById('aoiroDeduction')) document.getElementById('aoiroDeduction').value = formData.aoiroDeduction || '650000';
+            if (document.getElementById('shoukiboKyousai')) document.getElementById('shoukiboKyousai').value = formData.shoukiboKyousai || '';
+            if (document.getElementById('keieiSafety')) document.getElementById('keieiSafety').value = formData.keieiSafety || '';
+            if (document.getElementById('ideco')) document.getElementById('ideco').value = formData.ideco || '';
+            if (document.getElementById('furusato')) document.getElementById('furusato').value = formData.furusato || '';
+            if (document.getElementById('lifeInsurance')) document.getElementById('lifeInsurance').value = formData.lifeInsurance || '';
+            if (document.getElementById('earthquakeInsurance')) document.getElementById('earthquakeInsurance').value = formData.earthquakeInsurance || '';
+            if (document.getElementById('medicalExpense')) document.getElementById('medicalExpense').value = formData.medicalExpense || '';
+            if (document.getElementById('hasSpouse')) document.getElementById('hasSpouse').checked = formData.hasSpouse || false;
+            if (document.getElementById('dependents')) document.getElementById('dependents').value = formData.dependents || '0';
+
+            const savedDate = new Date(formData.savedAt);
+            this.showSaveNotification(`読み込み完了（${savedDate.toLocaleDateString('ja-JP')}保存）`);
+            return true;
+        } catch (error) {
+            console.error('読み込みエラー:', error);
+            this.showSaveNotification('読み込みに失敗しました', true);
+            return false;
+        }
+    }
+
+    // Clear saved data
+    clearSavedData() {
+        try {
+            localStorage.removeItem('jigyounushi_form_data');
+            this.showSaveNotification('保存データを削除しました');
+            return true;
+        } catch (error) {
+            console.error('削除エラー:', error);
+            return false;
+        }
+    }
+
+    // Show save/load notification
+    showSaveNotification(message, isError = false) {
+        // Remove existing notification
+        const existing = document.querySelector('.save-notification');
+        if (existing) existing.remove();
+
+        const notification = document.createElement('div');
+        notification.className = 'save-notification';
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: ${isError ? '#f44336' : '#4CAF50'};
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            font-weight: 500;
+        `;
+        notification.textContent = message;
+
+        // Add animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.body.appendChild(notification);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
 }
 
 // Initialize calculator when DOM is loaded

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="個人事業主から法人化（法人成り）した場合の税金・手取りを比較シミュレーション。法人化のメリット・デメリットを数値で確認。">
+    <title>法人成りシミュレーター | 個人 vs 法人 比較計算</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .simulator-container { max-width: 1000px; margin: 0 auto; }
+
+        .comparison-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .comparison-card.individual {
+            border-top: 4px solid #667eea;
+        }
+
+        .comparison-card.corporation {
+            border-top: 4px solid #27ae60;
+        }
+
+        .comparison-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-row.total {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin: 10px -24px -24px -24px;
+            padding: 16px 24px;
+            border-radius: 0 0 16px 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .result-row.total.better {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .verdict-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .verdict-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .verdict-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .verdict-note {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .threshold-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .pros, .cons {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .pros { border-top: 3px solid #27ae60; }
+        .cons { border-top: 3px solid #e74c3c; }
+
+        .pros h4, .cons h4 {
+            margin-bottom: 15px;
+        }
+
+        .pros li, .cons li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .salary-slider {
+            margin: 20px 0;
+        }
+
+        .salary-slider input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .salary-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-cards, .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container simulator-container">
+        <header>
+            <h1>🏢 法人成りシミュレーター</h1>
+            <p>個人事業主 vs 法人化 - どちらが有利か数値で比較</p>
+            <a href="jigyounushi.html" style="display: inline-block; margin-top: 10px; padding: 8px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.9rem;">← 計算ツールに戻る</a>
+        </header>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h3>📊 シミュレーション条件</h3>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="revenue">年間売上（税抜）</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="revenue" value="1000" placeholder="1000">
+                        <span class="unit">万円</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="expenses">年間経費（税抜）</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="expenses" value="200" placeholder="200">
+                        <span class="unit">万円</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="corpSalary">法人化後の役員報酬（月額）</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="corpSalary" value="50" placeholder="50">
+                        <span class="unit">万円</span>
+                    </div>
+                    <small style="color: #666;">法人から自分に支払う給料</small>
+                </div>
+                <div class="input-group">
+                    <label for="age">年齢</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="number" id="age" value="35" min="20" max="70">
+                        <span class="unit">歳</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="salary-slider">
+                <label>役員報酬の調整: <strong id="salaryDisplay">50万円/月</strong></label>
+                <input type="range" id="salarySlider" min="20" max="100" value="50" step="5">
+                <div class="slider-labels">
+                    <span>20万円</span>
+                    <span>60万円</span>
+                    <span>100万円</span>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">比較計算する</button>
+        </div>
+
+        <!-- Verdict -->
+        <div class="verdict-card" id="verdictCard">
+            <h2 id="verdictTitle">計算結果</h2>
+            <div class="verdict-amount" id="verdictAmount">-</div>
+            <p class="verdict-note" id="verdictNote">上の条件を入力して計算してください</p>
+        </div>
+
+        <!-- Comparison Cards -->
+        <div class="comparison-cards">
+            <div class="comparison-card individual">
+                <h3><span class="card-icon">👤</span> 個人事業主のまま</h3>
+                <div class="result-row">
+                    <span>事業所得</span>
+                    <span id="ind_income">-</span>
+                </div>
+                <div class="result-row">
+                    <span>青色申告控除</span>
+                    <span id="ind_aoiro">-65万円</span>
+                </div>
+                <div class="result-row">
+                    <span>所得税</span>
+                    <span id="ind_income_tax">-</span>
+                </div>
+                <div class="result-row">
+                    <span>住民税</span>
+                    <span id="ind_resident_tax">-</span>
+                </div>
+                <div class="result-row">
+                    <span>国民健康保険</span>
+                    <span id="ind_health">-</span>
+                </div>
+                <div class="result-row">
+                    <span>国民年金</span>
+                    <span id="ind_pension">-</span>
+                </div>
+                <div class="result-row">
+                    <span>個人事業税</span>
+                    <span id="ind_business_tax">-</span>
+                </div>
+                <div class="result-row total" id="ind_total_row">
+                    <span>手取り</span>
+                    <span id="ind_net">-</span>
+                </div>
+            </div>
+
+            <div class="comparison-card corporation">
+                <h3><span class="card-icon">🏢</span> 法人化した場合</h3>
+                <div class="result-row">
+                    <span>役員報酬（年額）</span>
+                    <span id="corp_salary">-</span>
+                </div>
+                <div class="result-row">
+                    <span>給与所得控除</span>
+                    <span id="corp_salary_deduction">-</span>
+                </div>
+                <div class="result-row">
+                    <span>所得税（個人）</span>
+                    <span id="corp_income_tax">-</span>
+                </div>
+                <div class="result-row">
+                    <span>住民税（個人）</span>
+                    <span id="corp_resident_tax">-</span>
+                </div>
+                <div class="result-row">
+                    <span>社会保険料（個人負担）</span>
+                    <span id="corp_social">-</span>
+                </div>
+                <div class="result-row">
+                    <span>法人税等</span>
+                    <span id="corp_corp_tax">-</span>
+                </div>
+                <div class="result-row">
+                    <span>社会保険料（会社負担）</span>
+                    <span id="corp_social_company">-</span>
+                </div>
+                <div class="result-row total" id="corp_total_row">
+                    <span>実質手取り</span>
+                    <span id="corp_net">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+            <h3>📈 売上別比較グラフ</h3>
+            <canvas id="comparisonChart" height="300"></canvas>
+        </div>
+
+        <!-- Threshold Info -->
+        <div class="threshold-info" id="thresholdInfo">
+            <strong>💡 法人化の目安:</strong><br>
+            一般的に事業所得が<strong>800万円以上</strong>になると法人化のメリットが出始めます。
+            ただし、社会保険の充実度、信用力、将来の事業展開なども考慮してください。
+        </div>
+
+        <!-- Pros and Cons -->
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ 法人化のメリット</h4>
+                <ul>
+                    <li>役員報酬で給与所得控除が使える</li>
+                    <li>所得の分散が可能（家族を役員に）</li>
+                    <li>社会保険で厚生年金に加入できる</li>
+                    <li>法人税率が一定（最大23.2%）</li>
+                    <li>信用力・取引先からの信頼向上</li>
+                    <li>経費の幅が広がる（社宅、出張手当等）</li>
+                    <li>退職金を経費にできる</li>
+                    <li>赤字の繰越が10年（個人は3年）</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ 法人化のデメリット</h4>
+                <ul>
+                    <li>設立費用がかかる（約25万円）</li>
+                    <li>社会保険料の会社負担が大きい</li>
+                    <li>税理士費用が増える（年30〜50万円）</li>
+                    <li>役員報酬は原則年1回しか変更不可</li>
+                    <li>赤字でも法人住民税の均等割（約7万円）</li>
+                    <li>会計・決算が複雑になる</li>
+                    <li>廃業時の清算手続きが面倒</li>
+                    <li>お金を自由に引き出せない</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>⚠️ 注意事項</h3>
+            <ul>
+                <li>このシミュレーションは概算です。実際の税額は各種控除や条件により異なります</li>
+                <li>法人化の判断は税金だけでなく、事業の将来性や働き方も考慮してください</li>
+                <li>具体的な検討は税理士にご相談ください</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('salarySlider');
+            const corpSalaryInput = document.getElementById('corpSalary');
+            const salaryDisplay = document.getElementById('salaryDisplay');
+
+            slider.addEventListener('input', function() {
+                corpSalaryInput.value = this.value;
+                salaryDisplay.textContent = this.value + '万円/月';
+            });
+
+            corpSalaryInput.addEventListener('change', function() {
+                slider.value = this.value;
+                salaryDisplay.textContent = this.value + '万円/月';
+            });
+
+            calculate();
+        });
+
+        function parseNum(id) {
+            const val = document.getElementById(id).value.replace(/,/g, '');
+            return parseFloat(val) || 0;
+        }
+
+        function formatCurrency(amount) {
+            return Math.round(amount).toLocaleString() + '円';
+        }
+
+        function formatMan(amount) {
+            return (amount / 10000).toFixed(1) + '万円';
+        }
+
+        // Individual calculation
+        function calculateIndividual(revenue, expenses) {
+            const income = (revenue - expenses) * 10000;
+            const aoiroDeduction = 650000;
+            const businessIncome = Math.max(0, income - aoiroDeduction);
+
+            // Income tax
+            const taxableIncome = Math.max(0, businessIncome - 480000); // Basic deduction
+            const incomeTax = calculateIncomeTax(taxableIncome);
+
+            // Resident tax
+            const residentTax = Math.round(taxableIncome * 0.10 + 5000);
+
+            // National health insurance
+            const healthInsurance = Math.min(Math.round((businessIncome - 430000) * 0.11 + 45000), 1060000);
+
+            // National pension
+            const pension = 203760;
+
+            // Business tax (for income over 2.9M)
+            const businessTax = businessIncome > 2900000 ? Math.round((businessIncome - 2900000) * 0.05) : 0;
+
+            const totalTax = incomeTax + residentTax + healthInsurance + pension + businessTax;
+            const netIncome = income - totalTax;
+
+            return {
+                income,
+                aoiroDeduction,
+                businessIncome,
+                incomeTax,
+                residentTax,
+                healthInsurance,
+                pension,
+                businessTax,
+                totalTax,
+                netIncome
+            };
+        }
+
+        // Corporation calculation
+        function calculateCorporation(revenue, expenses, monthlySalary, age) {
+            const revenueYen = revenue * 10000;
+            const expensesYen = expenses * 10000;
+            const annualSalary = monthlySalary * 10000 * 12;
+
+            // Salary deduction
+            const salaryDeduction = calculateSalaryDeduction(annualSalary);
+            const taxableSalary = Math.max(0, annualSalary - salaryDeduction - 480000);
+
+            // Personal income tax
+            const personalIncomeTax = calculateIncomeTax(taxableSalary);
+
+            // Personal resident tax
+            const personalResidentTax = Math.round(taxableSalary * 0.10 + 5000);
+
+            // Social insurance (employee portion ~15%)
+            const socialInsuranceEmployee = Math.round(annualSalary * 0.15);
+            const socialInsuranceCompany = Math.round(annualSalary * 0.15);
+
+            // Corporate profit
+            const corporateExpenses = expensesYen + annualSalary + socialInsuranceCompany;
+            const corporateProfit = Math.max(0, revenueYen - corporateExpenses);
+
+            // Corporate tax (simplified: ~25% effective rate)
+            let corpTaxRate = corporateProfit <= 8000000 ? 0.22 : 0.30;
+            const corporateTax = Math.round(corporateProfit * corpTaxRate);
+
+            // Net income after all taxes
+            const totalPersonalTax = personalIncomeTax + personalResidentTax + socialInsuranceEmployee;
+            const personalNetIncome = annualSalary - totalPersonalTax;
+
+            // Add retained earnings (after corp tax) as potential value
+            const retainedEarnings = corporateProfit - corporateTax;
+            const effectiveNetIncome = personalNetIncome + retainedEarnings;
+
+            return {
+                annualSalary,
+                salaryDeduction,
+                personalIncomeTax,
+                personalResidentTax,
+                socialInsuranceEmployee,
+                socialInsuranceCompany,
+                corporateProfit,
+                corporateTax,
+                personalNetIncome,
+                retainedEarnings,
+                effectiveNetIncome,
+                totalCost: totalPersonalTax + corporateTax + socialInsuranceCompany
+            };
+        }
+
+        function calculateIncomeTax(taxableIncome) {
+            if (taxableIncome <= 1950000) return Math.round(taxableIncome * 0.05);
+            if (taxableIncome <= 3300000) return Math.round(taxableIncome * 0.10 - 97500);
+            if (taxableIncome <= 6950000) return Math.round(taxableIncome * 0.20 - 427500);
+            if (taxableIncome <= 9000000) return Math.round(taxableIncome * 0.23 - 636000);
+            if (taxableIncome <= 18000000) return Math.round(taxableIncome * 0.33 - 1536000);
+            if (taxableIncome <= 40000000) return Math.round(taxableIncome * 0.40 - 2796000);
+            return Math.round(taxableIncome * 0.45 - 4796000);
+        }
+
+        function calculateSalaryDeduction(salary) {
+            if (salary <= 1625000) return 550000;
+            if (salary <= 1800000) return Math.round(salary * 0.40 - 100000);
+            if (salary <= 3600000) return Math.round(salary * 0.30 + 80000);
+            if (salary <= 6600000) return Math.round(salary * 0.20 + 440000);
+            if (salary <= 8500000) return Math.round(salary * 0.10 + 1100000);
+            return 1950000;
+        }
+
+        function calculate() {
+            const revenue = parseNum('revenue');
+            const expenses = parseNum('expenses');
+            const corpSalary = parseNum('corpSalary');
+            const age = parseNum('age');
+
+            const ind = calculateIndividual(revenue, expenses);
+            const corp = calculateCorporation(revenue, expenses, corpSalary, age);
+
+            // Update individual results
+            document.getElementById('ind_income').textContent = formatCurrency(ind.income);
+            document.getElementById('ind_income_tax').textContent = formatCurrency(ind.incomeTax);
+            document.getElementById('ind_resident_tax').textContent = formatCurrency(ind.residentTax);
+            document.getElementById('ind_health').textContent = formatCurrency(ind.healthInsurance);
+            document.getElementById('ind_pension').textContent = formatCurrency(ind.pension);
+            document.getElementById('ind_business_tax').textContent = formatCurrency(ind.businessTax);
+            document.getElementById('ind_net').textContent = formatCurrency(ind.netIncome);
+
+            // Update corporation results
+            document.getElementById('corp_salary').textContent = formatCurrency(corp.annualSalary);
+            document.getElementById('corp_salary_deduction').textContent = '-' + formatCurrency(corp.salaryDeduction);
+            document.getElementById('corp_income_tax').textContent = formatCurrency(corp.personalIncomeTax);
+            document.getElementById('corp_resident_tax').textContent = formatCurrency(corp.personalResidentTax);
+            document.getElementById('corp_social').textContent = formatCurrency(corp.socialInsuranceEmployee);
+            document.getElementById('corp_corp_tax').textContent = formatCurrency(corp.corporateTax);
+            document.getElementById('corp_social_company').textContent = formatCurrency(corp.socialInsuranceCompany);
+            document.getElementById('corp_net').textContent = formatCurrency(corp.effectiveNetIncome);
+
+            // Update verdict
+            const difference = corp.effectiveNetIncome - ind.netIncome;
+            const verdictCard = document.getElementById('verdictCard');
+            const indRow = document.getElementById('ind_total_row');
+            const corpRow = document.getElementById('corp_total_row');
+
+            indRow.classList.remove('better');
+            corpRow.classList.remove('better');
+
+            if (difference > 0) {
+                document.getElementById('verdictTitle').textContent = '🏢 法人化が有利！';
+                document.getElementById('verdictAmount').textContent = '+' + formatCurrency(difference) + '/年';
+                document.getElementById('verdictNote').textContent = '法人化することで年間 ' + formatMan(difference) + ' お得になる可能性があります';
+                verdictCard.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                corpRow.classList.add('better');
+            } else {
+                document.getElementById('verdictTitle').textContent = '👤 個人事業主が有利！';
+                document.getElementById('verdictAmount').textContent = '+' + formatCurrency(-difference) + '/年';
+                document.getElementById('verdictNote').textContent = '現状維持で年間 ' + formatMan(-difference) + ' お得です';
+                verdictCard.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                indRow.classList.add('better');
+            }
+
+            // Update chart
+            updateChart(expenses, corpSalary, age);
+        }
+
+        function updateChart(expenses, corpSalary, age) {
+            const revenues = [400, 600, 800, 1000, 1200, 1500, 2000, 3000];
+            const indData = [];
+            const corpData = [];
+
+            revenues.forEach(rev => {
+                const ind = calculateIndividual(rev, expenses);
+                const corp = calculateCorporation(rev, expenses, corpSalary, age);
+                indData.push(Math.round(ind.netIncome / 10000));
+                corpData.push(Math.round(corp.effectiveNetIncome / 10000));
+            });
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: revenues.map(r => r + '万円'),
+                    datasets: [
+                        {
+                            label: '個人事業主',
+                            data: indData,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: '法人化',
+                            data: corpData,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '万円';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '手取り（万円）' }
+                        },
+                        x: {
+                            title: { display: true, text: '年間売上' }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

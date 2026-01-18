@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="インボイス制度（適格請求書等保存方式）の影響を計算。免税事業者が課税事業者になった場合の負担をシミュレーション。">
+    <title>インボイス制度計算機 | 消費税負担シミュレーター</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .invoice-container { max-width: 900px; margin: 0 auto; }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .status-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .status-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%);
+        }
+
+        .status-card .icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .status-card h4 { margin-bottom: 8px; color: #333; }
+        .status-card p { font-size: 0.85rem; color: #666; }
+
+        .result-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .impact-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border-radius: 16px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .impact-card.positive {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .impact-card.neutral {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .impact-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .timeline {
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: 13px;
+            top: 24px;
+            width: 2px;
+            height: calc(100% + 8px);
+            background: #e9ecef;
+        }
+
+        .timeline-item:last-child:after { display: none; }
+
+        .timeline-date {
+            min-width: 120px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .option-box {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .option-box:hover {
+            border-color: #667eea;
+        }
+
+        .option-box h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .option-box .tag {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+        }
+
+        .option-box .tag.recommended {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .chart-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .status-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container invoice-container">
+        <header>
+            <h1>📄 インボイス制度計算機</h1>
+            <p>免税事業者 → 課税事業者になった場合の消費税負担をシミュレーション</p>
+            <a href="jigyounushi.html" style="display: inline-block; margin-top: 10px; padding: 8px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.9rem;">← 計算ツールに戻る</a>
+        </header>
+
+        <!-- Status Selection -->
+        <div class="result-section">
+            <h3>📋 あなたの状況を選択</h3>
+            <div class="status-cards">
+                <div class="status-card selected" onclick="selectStatus('exempt')" id="status_exempt">
+                    <div class="icon">🆓</div>
+                    <h4>免税事業者</h4>
+                    <p>年間売上1,000万円以下<br>消費税を納めていない</p>
+                </div>
+                <div class="status-card" onclick="selectStatus('taxable')" id="status_taxable">
+                    <div class="icon">💰</div>
+                    <h4>課税事業者</h4>
+                    <p>すでに消費税を<br>納めている</p>
+                </div>
+                <div class="status-card" onclick="selectStatus('considering')" id="status_considering">
+                    <div class="icon">🤔</div>
+                    <h4>登録検討中</h4>
+                    <p>インボイス登録を<br>検討している</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="result-section">
+            <h3>💹 売上・経費情報</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="revenue">年間売上（税抜）</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="revenue" value="600" placeholder="600">
+                        <span class="unit">万円</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="expenses">年間経費（税抜）</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="expenses" value="100" placeholder="100">
+                        <span class="unit">万円</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="b2bRatio">売上のうちB2B（法人向け）の割合</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="number" id="b2bRatio" value="80" min="0" max="100">
+                        <span class="unit">%</span>
+                    </div>
+                    <small style="color: #666;">法人向け売上が多いほどインボイス登録の影響大</small>
+                </div>
+                <div class="input-group">
+                    <label for="taxableExpenseRatio">経費のうち課税仕入の割合</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="number" id="taxableExpenseRatio" value="60" min="0" max="100">
+                        <span class="unit">%</span>
+                    </div>
+                    <small style="color: #666;">消費税がかかる仕入・経費の割合</small>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">影響を計算する</button>
+        </div>
+
+        <!-- Impact Card -->
+        <div class="impact-card" id="impactCard">
+            <h2 id="impactTitle">インボイス登録した場合の年間負担</h2>
+            <div class="impact-amount" id="impactAmount">-</div>
+            <p id="impactNote">消費税の納税義務が発生します</p>
+        </div>
+
+        <!-- Detailed Results -->
+        <div class="result-section">
+            <h3>📊 詳細シミュレーション結果</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>項目</th>
+                    <th>免税事業者のまま</th>
+                    <th>インボイス登録</th>
+                </tr>
+                <tr>
+                    <td>売上（税込）</td>
+                    <td id="res_exempt_revenue">-</td>
+                    <td id="res_taxable_revenue">-</td>
+                </tr>
+                <tr>
+                    <td>預かり消費税</td>
+                    <td>なし（益税）</td>
+                    <td id="res_collected_tax">-</td>
+                </tr>
+                <tr>
+                    <td>支払消費税（仕入税額控除）</td>
+                    <td>-</td>
+                    <td id="res_paid_tax">-</td>
+                </tr>
+                <tr>
+                    <td>納付消費税</td>
+                    <td>0円</td>
+                    <td id="res_tax_payment">-</td>
+                </tr>
+                <tr>
+                    <td>2割特例適用時</td>
+                    <td>-</td>
+                    <td id="res_special_tax">-</td>
+                </tr>
+                <tr style="background: #f8f9fa; font-weight: bold;">
+                    <td>実質手取り変化</td>
+                    <td>基準</td>
+                    <td id="res_difference">-</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Options -->
+        <div class="result-section">
+            <h3>🎯 あなたへの選択肢</h3>
+
+            <div class="option-box" id="option1">
+                <h4>
+                    選択肢1: インボイス登録する
+                    <span class="tag" id="option1_tag">取引先に法人が多い場合</span>
+                </h4>
+                <p id="option1_desc">取引先から値引き要請を避けられる。2割特例を活用すれば負担を軽減可能。</p>
+                <ul>
+                    <li>2割特例: 売上税額の2割のみ納付（2026年9月まで）</li>
+                    <li>簡易課税: 業種ごとのみなし仕入率で計算（届出必要）</li>
+                </ul>
+            </div>
+
+            <div class="option-box" id="option2">
+                <h4>
+                    選択肢2: 免税事業者のまま
+                    <span class="tag" id="option2_tag">B2C中心の場合</span>
+                </h4>
+                <p id="option2_desc">消費者向け（B2C）ビジネスなら影響は限定的。ただし法人取引で不利になる可能性。</p>
+                <ul>
+                    <li>法人取引先から取引停止や値引き要請のリスク</li>
+                    <li>2029年10月以降は経過措置終了で影響拡大</li>
+                </ul>
+            </div>
+
+            <div class="option-box" id="option3">
+                <h4>
+                    選択肢3: 値引きで対応
+                    <span class="tag">交渉次第</span>
+                </h4>
+                <p>取引先と交渉し、消費税相当分を値引きして取引継続。</p>
+                <ul>
+                    <li>経過措置期間（〜2029年9月）は80%→50%控除可能</li>
+                    <li>値引き幅は取引先との関係性次第</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="result-section">
+            <h3>📅 インボイス制度のスケジュール</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2023年10月</div>
+                    <div class="timeline-content">
+                        <strong>インボイス制度開始</strong><br>
+                        適格請求書発行事業者の登録開始
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">〜2026年9月</div>
+                    <div class="timeline-content">
+                        <strong>2割特例期間</strong><br>
+                        免税事業者からの転換者は売上税額の2割のみ納付でOK
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">〜2026年9月</div>
+                    <div class="timeline-content">
+                        <strong>経過措置（80%控除）</strong><br>
+                        免税事業者からの仕入でも80%の仕入税額控除が可能
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2026年10月〜</div>
+                    <div class="timeline-content">
+                        <strong>経過措置（50%控除）</strong><br>
+                        免税事業者からの仕入は50%のみ控除可能
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2029年10月〜</div>
+                    <div class="timeline-content">
+                        <strong>経過措置終了</strong><br>
+                        免税事業者からの仕入は仕入税額控除不可に
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-section">
+            <h3>📈 売上別・消費税負担シミュレーション</h3>
+            <canvas id="taxChart" height="300"></canvas>
+        </div>
+
+        <!-- Warning -->
+        <div class="warning-box">
+            <strong>⚠️ 注意事項</strong><br>
+            <ul style="margin: 10px 0 0 20px;">
+                <li>このシミュレーションは概算です。実際の税額は取引内容により異なります</li>
+                <li>簡易課税制度の適用には事前届出が必要です</li>
+                <li>具体的な判断は税理士にご相談ください</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>📚 インボイス制度とは？</h3>
+            <ul>
+                <li><strong>正式名称:</strong> 適格請求書等保存方式</li>
+                <li><strong>目的:</strong> 消費税の仕入税額控除を正確に行うための制度</li>
+                <li><strong>影響:</strong> 登録していない事業者からの仕入は控除不可に</li>
+                <li><strong>登録:</strong> 税務署に申請し「適格請求書発行事業者」になる必要あり</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentStatus = 'exempt';
+        let chart = null;
+
+        function selectStatus(status) {
+            currentStatus = status;
+            document.querySelectorAll('.status-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('status_' + status).classList.add('selected');
+            calculate();
+        }
+
+        function parseNum(id) {
+            const val = document.getElementById(id).value.replace(/,/g, '');
+            return parseFloat(val) || 0;
+        }
+
+        function formatCurrency(amount) {
+            return Math.round(amount).toLocaleString() + '円';
+        }
+
+        function calculate() {
+            const revenue = parseNum('revenue') * 10000;
+            const expenses = parseNum('expenses') * 10000;
+            const b2bRatio = parseNum('b2bRatio') / 100;
+            const taxableExpenseRatio = parseNum('taxableExpenseRatio') / 100;
+
+            // Tax calculations
+            const taxRate = 0.10;
+            const revenueWithTax = revenue * (1 + taxRate);
+            const collectedTax = revenue * taxRate;
+            const paidTax = expenses * taxableExpenseRatio * taxRate;
+
+            // Normal tax payment
+            const normalTaxPayment = collectedTax - paidTax;
+
+            // 2割特例
+            const specialTaxPayment = collectedTax * 0.2;
+
+            // Best option
+            const bestTaxPayment = Math.min(normalTaxPayment, specialTaxPayment);
+
+            // Update results
+            document.getElementById('res_exempt_revenue').textContent = formatCurrency(revenueWithTax);
+            document.getElementById('res_taxable_revenue').textContent = formatCurrency(revenueWithTax);
+            document.getElementById('res_collected_tax').textContent = formatCurrency(collectedTax);
+            document.getElementById('res_paid_tax').textContent = '-' + formatCurrency(paidTax);
+            document.getElementById('res_tax_payment').textContent = formatCurrency(normalTaxPayment);
+            document.getElementById('res_special_tax').textContent = formatCurrency(specialTaxPayment) +
+                (specialTaxPayment < normalTaxPayment ? ' ✨お得' : '');
+            document.getElementById('res_difference').textContent = '-' + formatCurrency(bestTaxPayment);
+
+            // Impact card
+            const impactCard = document.getElementById('impactCard');
+            if (bestTaxPayment > 0) {
+                document.getElementById('impactTitle').textContent = 'インボイス登録した場合の年間消費税負担';
+                document.getElementById('impactAmount').textContent = formatCurrency(bestTaxPayment);
+                document.getElementById('impactNote').textContent =
+                    specialTaxPayment < normalTaxPayment
+                        ? '2割特例を使えば負担を抑えられます'
+                        : '通常の計算方法が有利です';
+                impactCard.className = 'impact-card';
+            } else {
+                document.getElementById('impactTitle').textContent = '消費税の還付が受けられる可能性';
+                document.getElementById('impactAmount').textContent = formatCurrency(-bestTaxPayment);
+                document.getElementById('impactNote').textContent = '経費が多い場合は登録メリットあり';
+                impactCard.className = 'impact-card positive';
+            }
+
+            // Update options
+            const option1Tag = document.getElementById('option1_tag');
+            const option2Tag = document.getElementById('option2_tag');
+            if (b2bRatio >= 0.7) {
+                option1Tag.className = 'tag recommended';
+                option1Tag.textContent = 'おすすめ';
+                option2Tag.className = 'tag';
+                option2Tag.textContent = 'リスクあり';
+            } else if (b2bRatio <= 0.3) {
+                option1Tag.className = 'tag';
+                option1Tag.textContent = '要検討';
+                option2Tag.className = 'tag recommended';
+                option2Tag.textContent = 'おすすめ';
+            } else {
+                option1Tag.className = 'tag';
+                option1Tag.textContent = '状況次第';
+                option2Tag.className = 'tag';
+                option2Tag.textContent = '状況次第';
+            }
+
+            // Update chart
+            updateChart(expenses, taxableExpenseRatio);
+        }
+
+        function updateChart(expenses, taxableExpenseRatio) {
+            const revenues = [300, 500, 700, 900, 1000, 1200, 1500];
+            const normalData = [];
+            const specialData = [];
+
+            revenues.forEach(rev => {
+                const revYen = rev * 10000;
+                const taxRate = 0.10;
+                const collectedTax = revYen * taxRate;
+                const paidTax = expenses * taxableExpenseRatio * taxRate;
+
+                normalData.push(Math.round((collectedTax - paidTax) / 10000));
+                specialData.push(Math.round(collectedTax * 0.2 / 10000));
+            });
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const ctx = document.getElementById('taxChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: revenues.map(r => r + '万円'),
+                    datasets: [
+                        {
+                            label: '通常計算',
+                            data: normalData,
+                            backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                            borderColor: '#667eea',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2割特例',
+                            data: specialData,
+                            backgroundColor: 'rgba(39, 174, 96, 0.7)',
+                            borderColor: '#27ae60',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '万円';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '消費税納付額（万円）' }
+                        },
+                        x: {
+                            title: { display: true, text: '年間売上' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', calculate);
+    </script>
+</body>
+</html>

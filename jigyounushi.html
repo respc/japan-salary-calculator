@@ -51,6 +51,29 @@
             </div>
         </div>
 
+        <!-- Tools Navigation -->
+        <div class="calculator" style="padding: 20px; margin-bottom: 20px;">
+            <h3 style="text-align: center; margin-bottom: 15px;">🛠️ 便利ツール</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+                <a href="houjin-simulator.html" style="display: flex; flex-direction: column; align-items: center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 12px; text-align: center; transition: all 0.3s ease;">
+                    <span style="font-size: 1.5rem; margin-bottom: 5px;">🏢</span>
+                    <span style="font-weight: 600; font-size: 0.9rem;">法人成りシミュレーター</span>
+                </a>
+                <a href="invoice-calculator.html" style="display: flex; flex-direction: column; align-items: center; padding: 15px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; text-decoration: none; border-radius: 12px; text-align: center; transition: all 0.3s ease;">
+                    <span style="font-size: 1.5rem; margin-bottom: 5px;">📄</span>
+                    <span style="font-weight: 600; font-size: 0.9rem;">インボイス計算機</span>
+                </a>
+                <a href="tax-calendar.html" style="display: flex; flex-direction: column; align-items: center; padding: 15px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; text-decoration: none; border-radius: 12px; text-align: center; transition: all 0.3s ease;">
+                    <span style="font-size: 1.5rem; margin-bottom: 5px;">📅</span>
+                    <span style="font-weight: 600; font-size: 0.9rem;">税金カレンダー</span>
+                </a>
+                <a href="setsuzei-guide.html" style="display: flex; flex-direction: column; align-items: center; padding: 15px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; text-decoration: none; border-radius: 12px; text-align: center; transition: all 0.3s ease;">
+                    <span style="font-size: 1.5rem; margin-bottom: 5px;">📚</span>
+                    <span style="font-weight: 600; font-size: 0.9rem;">節税ガイド</span>
+                </a>
+            </div>
+        </div>
+
         <!-- Calculator Form -->
         <div class="calculator">
             <form id="jigyounushiForm">
@@ -374,6 +397,19 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- 保存・読込ボタン -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button type="button" onclick="window.calculator.saveFormData()" style="flex: 1; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                        💾 保存
+                    </button>
+                    <button type="button" onclick="window.calculator.loadFormData()" style="flex: 1; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                        📂 読込
+                    </button>
+                    <button type="button" onclick="if(confirm('保存データを削除しますか？')) window.calculator.clearSavedData()" style="padding: 12px 16px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                        🗑️
+                    </button>
                 </div>
 
                 <!-- 計算ボタン -->

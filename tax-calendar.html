@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="個人事業主・フリーランスのための確定申告・税金スケジュールカレンダー。重要な締め切りを一目で確認。">
+    <title>税金カレンダー | 確定申告スケジュール</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .calendar-container { max-width: 1000px; margin: 0 auto; }
+
+        .year-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .year-nav button {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .year-nav button.active, .year-nav button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .month-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            min-height: 200px;
+        }
+
+        .month-card h3 {
+            text-align: center;
+            padding: 10px;
+            margin: -16px -16px 16px -16px;
+            border-radius: 12px 12px 0 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .month-card.current-month h3 {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .event {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .event:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .event.deadline {
+            background: #ffebee;
+        }
+        .event.deadline:before { background: #e74c3c; }
+
+        .event.payment {
+            background: #fff3e0;
+        }
+        .event.payment:before { background: #ff9800; }
+
+        .event.preparation {
+            background: #e3f2fd;
+        }
+        .event.preparation:before { background: #2196F3; }
+
+        .event.bonus {
+            background: #e8f5e9;
+        }
+        .event.bonus:before { background: #4CAF50; }
+
+        .event-date {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .event-title {
+            font-weight: 600;
+            margin: 4px 0;
+        }
+
+        .event-desc {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .upcoming-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .upcoming-event {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            margin: 12px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .upcoming-event.urgent {
+            border-left-color: #e74c3c;
+            background: #ffebee;
+        }
+
+        .upcoming-date {
+            min-width: 80px;
+            text-align: center;
+            margin-right: 20px;
+        }
+
+        .upcoming-date .day {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            line-height: 1;
+        }
+
+        .upcoming-event.urgent .upcoming-date .day {
+            color: #e74c3c;
+        }
+
+        .upcoming-date .month {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .upcoming-content {
+            flex: 1;
+        }
+
+        .upcoming-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .upcoming-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .countdown {
+            text-align: center;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .tips-section h4 {
+            margin-bottom: 15px;
+        }
+
+        .tips-section ul {
+            margin-left: 20px;
+        }
+
+        .tips-section li {
+            margin: 8px 0;
+        }
+
+        @media (max-width: 900px) {
+            .calendar-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container calendar-container">
+        <header>
+            <h1>📅 税金カレンダー</h1>
+            <p>個人事業主・フリーランスのための確定申告・納税スケジュール</p>
+            <a href="jigyounushi.html" style="display: inline-block; margin-top: 10px; padding: 8px 20px; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.9rem;">← 計算ツールに戻る</a>
+        </header>
+
+        <!-- Upcoming Events -->
+        <div class="upcoming-section">
+            <h3>🔔 直近の重要な締め切り</h3>
+            <div id="upcomingEvents">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span>申告・届出期限</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff9800;"></div>
+                <span>納税期限</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2196F3;"></div>
+                <span>準備・確認</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4CAF50;"></div>
+                <span>お得情報</span>
+            </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- Dynamic content -->
+        </div>
+
+        <!-- Tips -->
+        <div class="tips-section">
+            <h4>💡 確定申告のポイント</h4>
+            <ul>
+                <li><strong>e-Taxがおすすめ:</strong> 青色申告65万円控除の要件。自宅から24時間申告可能</li>
+                <li><strong>領収書の整理:</strong> 月ごとにまとめておくと確定申告時に楽</li>
+                <li><strong>帳簿は毎月:</strong> 年末にまとめてやると大変。毎月少しずつ記帳を</li>
+                <li><strong>ふるさと納税:</strong> 12月は人気返礼品が売り切れるので早めに</li>
+                <li><strong>経費の見直し:</strong> 年末までに必要な経費を使い切る（無駄遣いはNG）</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>⚠️ 注意事項</h3>
+            <ul>
+                <li>期限が土日祝日の場合は翌営業日が期限となります</li>
+                <li>消費税の申告義務は前々年の課税売上高により判定されます</li>
+                <li>予定納税は前年の所得税が15万円以上の場合に必要です</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const taxEvents = [
+            // 1月
+            { month: 1, day: 4, title: '税務署の業務開始', type: 'preparation', desc: '年始から確定申告の準備を' },
+            { month: 1, day: 10, title: '源泉所得税の納付期限', type: 'payment', desc: '特例適用者（7〜12月分）' },
+            { month: 1, day: 31, title: '償却資産申告', type: 'deadline', desc: '事業用資産がある場合' },
+            { month: 1, day: 31, title: '法定調書の提出期限', type: 'deadline', desc: '支払調書・源泉徴収票' },
+
+            // 2月
+            { month: 2, day: 16, title: '確定申告受付開始', type: 'preparation', desc: '所得税・贈与税' },
+
+            // 3月
+            { month: 3, day: 15, title: '所得税確定申告期限', type: 'deadline', desc: '⚠️ 最重要！青色申告の提出も' },
+            { month: 3, day: 15, title: '青色申告承認申請期限', type: 'deadline', desc: '翌年から青色申告したい場合' },
+            { month: 3, day: 15, title: '贈与税申告期限', type: 'deadline', desc: '前年の贈与について' },
+            { month: 3, day: 31, title: '消費税申告期限', type: 'deadline', desc: '課税事業者の場合' },
+
+            // 4月
+            { month: 4, day: 1, title: '新年度スタート', type: 'preparation', desc: '新しい帳簿を用意' },
+            { month: 4, day: 30, title: '軽自動車税納付', type: 'payment', desc: '事業用車両がある場合' },
+
+            // 5月
+            { month: 5, day: 31, title: '自動車税納付期限', type: 'payment', desc: '普通車・事業用車両' },
+
+            // 6月
+            { month: 6, day: 30, title: '住民税（1期）納付', type: 'payment', desc: '普通徴収の場合' },
+
+            // 7月
+            { month: 7, day: 10, title: '源泉所得税の納付', type: 'payment', desc: '特例適用者（1〜6月分）' },
+            { month: 7, day: 31, title: '所得税予定納税（1期）', type: 'payment', desc: '前年の税額が15万円以上の場合' },
+
+            // 8月
+            { month: 8, day: 31, title: '住民税（2期）納付', type: 'payment', desc: '普通徴収の場合' },
+            { month: 8, day: 31, title: '個人事業税（1期）', type: 'payment', desc: '事業所得290万円超の場合' },
+
+            // 9月
+            { month: 9, day: 1, title: '上半期の帳簿確認', type: 'preparation', desc: '経費・売上の確認を' },
+
+            // 10月
+            { month: 10, day: 31, title: '住民税（3期）納付', type: 'payment', desc: '普通徴収の場合' },
+
+            // 11月
+            { month: 11, day: 30, title: '所得税予定納税（2期）', type: 'payment', desc: '前年の税額が15万円以上の場合' },
+            { month: 11, day: 30, title: '個人事業税（2期）', type: 'payment', desc: '事業所得290万円超の場合' },
+
+            // 12月
+            { month: 12, day: 1, title: 'ふるさと納税ラストスパート', type: 'bonus', desc: '年内の寄付で今年の控除に' },
+            { month: 12, day: 15, title: '確定申告の準備開始', type: 'preparation', desc: '年間の帳簿締め作業' },
+            { month: 12, day: 25, title: '経費の最終確認', type: 'preparation', desc: '必要な経費を年内に' },
+            { month: 12, day: 31, title: 'ふるさと納税期限', type: 'bonus', desc: '⚠️ 23:59まで！' },
+
+            // 1月（翌年表示用）
+            { month: 1, day: 31, title: '住民税（4期）納付', type: 'payment', desc: '普通徴収の場合' },
+        ];
+
+        const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const currentMonth = new Date().getMonth() + 1;
+
+            grid.innerHTML = '';
+
+            for (let month = 1; month <= 12; month++) {
+                const monthEvents = taxEvents.filter(e => e.month === month);
+                const isCurrentMonth = month === currentMonth;
+
+                const card = document.createElement('div');
+                card.className = 'month-card' + (isCurrentMonth ? ' current-month' : '');
+
+                let eventsHtml = '';
+                monthEvents.forEach(event => {
+                    eventsHtml += `
+                        <div class="event ${event.type}">
+                            <div class="event-date">${event.day}日</div>
+                            <div class="event-title">${event.title}</div>
+                            <div class="event-desc">${event.desc}</div>
+                        </div>
+                    `;
+                });
+
+                if (monthEvents.length === 0) {
+                    eventsHtml = '<p style="color: #999; text-align: center; padding: 20px;">特になし</p>';
+                }
+
+                card.innerHTML = `
+                    <h3>${monthNames[month - 1]}</h3>
+                    ${eventsHtml}
+                `;
+
+                grid.appendChild(card);
+            }
+        }
+
+        function renderUpcoming() {
+            const container = document.getElementById('upcomingEvents');
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1;
+            const currentDay = today.getDate();
+
+            // Get upcoming events (next 90 days)
+            const upcoming = [];
+            for (let i = 0; i < 4; i++) {
+                const checkMonth = ((currentMonth - 1 + i) % 12) + 1;
+                taxEvents.filter(e => e.month === checkMonth).forEach(event => {
+                    let eventDate;
+                    if (i === 0 && event.day < currentDay) {
+                        // Past event this month, skip or show next year
+                        return;
+                    }
+                    eventDate = new Date(today.getFullYear() + (checkMonth < currentMonth ? 1 : 0), checkMonth - 1, event.day);
+                    const daysUntil = Math.ceil((eventDate - today) / (1000 * 60 * 60 * 24));
+                    if (daysUntil >= 0 && daysUntil <= 90) {
+                        upcoming.push({ ...event, daysUntil, eventDate });
+                    }
+                });
+            }
+
+            // Sort by date
+            upcoming.sort((a, b) => a.daysUntil - b.daysUntil);
+
+            // Take top 5
+            const topEvents = upcoming.slice(0, 5);
+
+            container.innerHTML = topEvents.map(event => {
+                const isUrgent = event.daysUntil <= 14;
+                let countdown = '';
+                if (event.daysUntil === 0) {
+                    countdown = '今日！';
+                } else if (event.daysUntil === 1) {
+                    countdown = '明日';
+                } else {
+                    countdown = `あと${event.daysUntil}日`;
+                }
+
+                return `
+                    <div class="upcoming-event ${isUrgent ? 'urgent' : ''}">
+                        <div class="upcoming-date">
+                            <div class="day">${event.day}</div>
+                            <div class="month">${monthNames[event.month - 1]}</div>
+                        </div>
+                        <div class="upcoming-content">
+                            <div class="upcoming-title">${event.title}</div>
+                            <div class="upcoming-desc">${event.desc}</div>
+                        </div>
+                        <div class="countdown">${countdown}</div>
+                    </div>
+                `;
+            }).join('');
+
+            if (topEvents.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">直近の締め切りはありません</p>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCalendar();
+            renderUpcoming();
+        });
+    </script>
+</body>
+</html>
